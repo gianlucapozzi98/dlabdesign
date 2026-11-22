@@ -175,7 +175,13 @@ for (const old of ['d-labdesign-chi-siamo', 'gallery-inaugurazione', 'contatti-d
 const sm = await fs.readFile(path.join(DIST, 'sitemap-0.xml'), 'utf8');
 if (/404/.test(sm)) fail('sitemap: contiene la 404');
 if (/keystatic/.test(sm)) fail('sitemap: contiene keystatic');
-ok('robots, sitemap, 404, .htaccess con 301, _redirects, icone, manifest');
+// Vercel con trailingSlash aggiunge prima la barra finale e poi cerca la regola: ogni 301 deve esistere anche con la barra
+const vc = JSON.parse(await fs.readFile(path.resolve('vercel.json'), 'utf8'));
+const vSrc = new Set((vc.redirects || []).map((r) => r.source));
+for (const s of vSrc) if (s !== '/' && !s.endsWith('/') && !vSrc.has(s + '/')) fail(`vercel.json: il redirect ${s} non ha la variante con la barra finale (su Vercel finirebbe in 404)`);
+const vHead = JSON.stringify(vc.headers || []);
+for (const h of ['X-Content-Type-Options', 'Referrer-Policy', 'X-Frame-Options']) if (!vHead.includes(h)) fail(`vercel.json: manca l'header ${h}`);
+ok('robots, sitemap, 404, .htaccess con 301, _redirects, vercel.json (301 con e senza barra, header), icone, manifest');
 
 // 8. Link esterni (opzionale, richiede rete)
 if (EXTERNAL) {

@@ -17,7 +17,17 @@
       "permanent": true
     },
     {
+      "source": "/d-labdesign-chi-siamo/",
+      "destination": "/il-lab/",
+      "permanent": true
+    },
+    {
       "source": "/progetti/casa/casa-%7C-01",
+      "destination": "/progetti/casa-01/",
+      "permanent": true
+    },
+    {
+      "source": "/progetti/casa/casa-%7C-01/",
       "destination": "/progetti/casa-01/",
       "permanent": true
     },
@@ -27,7 +37,17 @@
       "permanent": true
     },
     {
+      "source": "/progetti/negozio/negozio-%7C-abbigliamento/",
+      "destination": "/progetti/negozio-abbigliamento/",
+      "permanent": true
+    },
+    {
       "source": "/progetti/negozio/negozio-%7C-tabaccheria",
+      "destination": "/progetti/negozio-tabaccheria/",
+      "permanent": true
+    },
+    {
+      "source": "/progetti/negozio/negozio-%7C-tabaccheria/",
       "destination": "/progetti/negozio-tabaccheria/",
       "permanent": true
     },
@@ -37,7 +57,17 @@
       "permanent": true
     },
     {
+      "source": "/gallery-inaugurazione/opening/opening/",
+      "destination": "/the-opening/",
+      "permanent": true
+    },
+    {
       "source": "/apertura-d-labdesign-chi-c-era",
+      "destination": "/the-opening/",
+      "permanent": true
+    },
+    {
+      "source": "/apertura-d-labdesign-chi-c-era/",
       "destination": "/the-opening/",
       "permanent": true
     },
@@ -47,7 +77,17 @@
       "permanent": true
     },
     {
+      "source": "/il-coraggio-di-osare/",
+      "destination": "/news/2012-09-20-il-coraggio-di-osare/",
+      "permanent": true
+    },
+    {
       "source": "/video-inaugurazione-d---labdesign-a-treviglio",
+      "destination": "/video/",
+      "permanent": true
+    },
+    {
+      "source": "/video-inaugurazione-d---labdesign-a-treviglio/",
       "destination": "/video/",
       "permanent": true
     },
@@ -57,7 +97,17 @@
       "permanent": true
     },
     {
+      "source": "/video-%7C/",
+      "destination": "/video/",
+      "permanent": true
+    },
+    {
       "source": "/orari-apertura",
+      "destination": "/contatti/",
+      "permanent": true
+    },
+    {
+      "source": "/orari-apertura/",
       "destination": "/contatti/",
       "permanent": true
     },
@@ -67,7 +117,17 @@
       "permanent": true
     },
     {
+      "source": "/iscriviti-alla-newsletter/",
+      "destination": "/contatti/",
+      "permanent": true
+    },
+    {
       "source": "/contatti-d-labdesign",
+      "destination": "/contatti/",
+      "permanent": true
+    },
+    {
+      "source": "/contatti-d-labdesign/",
       "destination": "/contatti/",
       "permanent": true
     },
@@ -77,7 +137,17 @@
       "permanent": true
     },
     {
+      "source": "/news//d-labdesign-al-salone-del-mobile-di-bergamo/",
+      "destination": "/news/2012-11-19-salone-del-mobile-bergamo/",
+      "permanent": true
+    },
+    {
       "source": "/news/d-labdesign-al-salone-del-mobile-di-bergamo",
+      "destination": "/news/2012-11-19-salone-del-mobile-bergamo/",
+      "permanent": true
+    },
+    {
+      "source": "/news/d-labdesign-al-salone-del-mobile-di-bergamo/",
       "destination": "/news/2012-11-19-salone-del-mobile-bergamo/",
       "permanent": true
     },
@@ -87,9 +157,51 @@
       "permanent": true
     },
     {
+      "source": "/news//notte-rosa/",
+      "destination": "/news/2017-07-05-open-day-notte-rosa/",
+      "permanent": true
+    },
+    {
       "source": "/news/notte-rosa",
       "destination": "/news/2017-07-05-open-day-notte-rosa/",
       "permanent": true
+    },
+    {
+      "source": "/news/notte-rosa/",
+      "destination": "/news/2017-07-05-open-day-notte-rosa/",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
+      ]
+    },
+    {
+      "source": "/_astro/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }
