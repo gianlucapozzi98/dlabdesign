@@ -1,0 +1,500 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Cartiglio from '../../components/Cartiglio.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import Closing from '../../components/Closing.astro';
+import SogliaDrawing from '../../components/SogliaDrawing.astro';
+import Esploso from '../../components/Esploso.astro';
+import { SITE } from '../../data/site';
+
+type Props =
+  | { kind: 'progetto'; entry: CollectionEntry<'progetti'>; next?: CollectionEntry<'progetti'>; index: number; total: number }
+  | { kind: 'studio'; entry: CollectionEntry<'studi'> };
+
+export async function getStaticPaths() {
+  const progetti = (await getCollection('progetti')).sort((a, b) => a.data.ordine - b.data.ordine);
+  const studi = await getCollection('studi');
+  const riservati = ['casa', 'negozio', 'studi'];
+  return [
+    ...progetti
+      .filter((p) => !riservati.includes(p.id))
+      .map((entry, i) => ({
+        params: { slug: entry.id },
+        props: { kind: 'progetto' as const, entry, next: progetti[(i + 1) % progetti.length], index: i, total: progetti.length },
+      })),
+    ...studi.map((entry) => ({ params: { slug: entry.id }, props: { kind: 'studio' as const, entry } })),
+  ];
+}
+
+const props = Astro.props as Props;
+const paras = (t: string) => t.split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean);
+
+let pageData: {
+  title: string;
+  description: string;
+} = { title: '', description: '' };
+
+let gallery: { src: ImageMetadata; alt: string; fase: string; didascalia?: string; big: string }[] = [];
+let fasi: typeof gallery = [];
+let galleryTitle = '';
+let disegno: (typeof gallery)[number] | undefined;
+let dopo: (typeof gallery)[number] | undefined;
+
+if (props.kind === 'progetto') {
+  const d = props.entry.data;
+  pageData = { title: `${d.titolo} · Progetto realizzato`, description: `${d.sintesi} Un progetto ${d.categoria === 'casa' ? 'per la casa' : 'per un negozio'} di D-Labdesign, Treviglio.`.slice(0, 155) };
+  gallery = await Promise.all(
+    d.foto.map(async (f) => ({
+      src: f.immagine,
+      alt: f.alt,
+      fase: f.fase,
+      didascalia: f.didascalia,
+      big: (await getImage({ src: f.immagine, width: Math.min(2000, f.immagine.width), format: 'webp', quality: 80 })).src,
+    })),
+  );
+  const prima = gallery.find((g) => g.fase === 'prima');
+  const durante = gallery.find((g) => g.fase === 'durante');
+  dopo = gallery.find((g) => g.fase === 'dopo');
+  fasi = [prima, durante, dopo].filter(Boolean) as typeof gallery;
+  disegno = gallery.find((g) => g.fase === 'disegno');
+  const mostrate = new Set([...(fasi.length > 1 ? fasi : []), ...(disegno && dopo ? [disegno, dopo] : [])]);
+  const resto = gallery.filter((g) => !mostrate.has(g));
+  if (mostrate.size && resto.length) gallery = resto;
+  galleryTitle = mostrate.size && resto.length ? `Altre foto · ${resto.length}` : `Galleria · ${gallery.length} foto`;
+} else {
+  const d = props.entry.data;
+  pageData = { title: `${d.titolo} · Studio non realizzato`, description: `${d.sintesi} Studio concettuale di D-Labdesign, non realizzato.`.slice(0, 155) };
+}
+const faseLabel: Record<string, string> = { prima: 'Prima', durante: 'Durante', dopo: 'Dopo', disegno: 'Disegno di progetto', '': '' };
+---
+
+<Base
+  title={pageData.title}
+  description={pageData.description}
+  image={props.kind === 'progetto' ? props.entry.data.copertina : undefined}
+  imageAlt={props.kind === 'progetto' ? props.entry.data.copertinaAlt : undefined}
+  type="article"
+  jsonLd={[
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+        { '@type': 'ListItem', position: 2, name: 'Progetti', item: `${SITE.url}/progetti/` },
+        { '@type': 'ListItem', position: 3, name: props.entry.data.titolo, item: `${SITE.url}/progetti/${props.entry.id}/` },
+      ],
+    },
+  ]}
+>
+  {
+    props.kind === 'progetto' ? (
+      <article class="proj">
+        <header class="proj__hero on-photo">
+          <div class="proj__img">
+            <Image
+              src={props.entry.data.copertina}
+              alt={props.entry.data.copertinaAlt}
+              widths={[480, 828, 1200, 1600, 2000]}
+              sizes="100vw"
+              loading="eager"
+              fetchpriority="high"
+              format="avif"
+              quality={58}
+            />
+          </div>
+          <div class="proj__over wrap">
+            <nav class="mono proj__crumbs" aria-label="Percorso">
+              <a class="draw-link" href="/progetti/">Progetti</a> /{' '}
+              <a class="draw-link" href={`/progetti/${props.entry.data.categoria}/`}>
+                {props.entry.data.categoria === 'casa' ? 'Casa' : 'Negozio'}
+              </a>
+            </nav>
+            <h1 class="h1 proj__title">{props.entry.data.titolo}</h1>
+            <p class="lead proj__sum">{props.entry.data.sintesi}</p>
+          </div>
+        </header>
+
+        <div class="wrap proj__body">
+          <div class="proj__text prose">
+            {paras(props.entry.data.descrizione).map((p) => (
+              <p>{p}</p>
+            ))}
+          </div>
+          <aside class="proj__aside" aria-label="Scheda del progetto">
+            <Cartiglio
+              tavola={`${String(props.index + 1).padStart(2, '0')}/${String(props.total).padStart(2, '0')}`}
+              titolo={props.entry.data.titolo}
+              nota={props.entry.data.categoria === 'casa' ? 'Casa · realizzato' : 'Negozio · realizzato'}
+              data={props.entry.data.anno ?? undefined}
+            />
+            <dl class="proj__facts">
+              <div>
+                <dt class="mono muted">Categoria</dt>
+                <dd>{props.entry.data.categoria === 'casa' ? 'Casa' : 'Negozio'}</dd>
+              </div>
+              {props.entry.data.luogo && (
+                <div>
+                  <dt class="mono muted">Luogo</dt>
+                  <dd>{props.entry.data.luogo}</dd>
+                </div>
+              )}
+              {props.entry.data.anno && (
+                <div>
+                  <dt class="mono muted">Anno</dt>
+                  <dd>{props.entry.data.anno}</dd>
+                </div>
+              )}
+              <div>
+                <dt class="mono muted">Foto</dt>
+                <dd>{gallery.length}</dd>
+              </div>
+            </dl>
+          </aside>
+        </div>
+
+        {fasi.length > 1 && (
+          <section class="wrap proj__fasi" aria-labelledby="fasi-title">
+            <h2 class="mono proj__h" id="fasi-title">
+              L’avanzamento dei lavori
+            </h2>
+            <ol class="fasi" role="list" data-lb-group>
+              {fasi.map((f, i) => (
+                <li class="fase">
+                  <span class="fase__n mono">
+                    {String(i + 1).padStart(2, '0')} · {faseLabel[f.fase]}
+                  </span>
+                  <a class="fase__img" href={f.big} data-lb data-cap={`${faseLabel[f.fase]}. ${f.alt}`} data-cursor>
+                    <Image src={f.src} alt={f.alt} widths={[480, 800, 1100]} sizes="(min-width: 960px) 32vw, 92vw" loading="lazy" format="avif" quality={66} />
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+        {disegno && dopo && (
+          <section class="wrap proj__dis" aria-labelledby="dis-title">
+            <h2 class="mono proj__h" id="dis-title">
+              Dal disegno allo spazio
+            </h2>
+            <div class="dis" data-lb-group>
+              <figure>
+                <a href={disegno.big} data-lb data-cap={disegno.alt} class="dis__img dis__img--draw" data-cursor>
+                  <Image src={disegno.src} alt={disegno.alt} widths={[600, 1000, 1400]} sizes="(min-width: 960px) 46vw, 92vw" loading="lazy" format="avif" quality={70} />
+                </a>
+                <figcaption class="caption mono">
+                  <span>Disegno di progetto</span>
+                  <span>dal cliente</span>
+                </figcaption>
+              </figure>
+              <figure>
+                <a href={dopo.big} data-lb data-cap={dopo.alt} class="dis__img" data-cursor>
+                  <Image src={dopo.src} alt={dopo.alt} widths={[600, 1000, 1400]} sizes="(min-width: 960px) 46vw, 92vw" loading="lazy" format="avif" quality={68} />
+                </a>
+                <figcaption class="caption mono">
+                  <span>Lo spazio finito</span>
+                  <span>foto</span>
+                </figcaption>
+              </figure>
+            </div>
+          </section>
+        )}
+
+        <section class="wrap proj__gal" aria-labelledby="gal-title">
+          <h2 class="mono proj__h" id="gal-title">
+            {galleryTitle}
+          </h2>
+          <ul class="gal" role="list" data-lb-group>
+            {gallery.map((g, i) => (
+              <li class:list={['gal__item', { 'gal__item--wide': i % 3 === 0 }]}>
+                <a class="gal__link" href={g.big} data-lb data-cap={g.alt} data-cursor>
+                  <Image src={g.src} alt={g.alt} widths={[480, 800, 1200]} sizes="(min-width: 960px) 50vw, 92vw" loading="lazy" format="avif" quality={66} />
+                  <span class="sr-only">Apri a pieno schermo</span>
+                </a>
+                {(g.fase || g.didascalia) && <p class="caption mono">{g.didascalia || faseLabel[g.fase]}</p>}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {props.next && props.next.id !== props.entry.id && (
+          <nav class="wrap proj__next" aria-label="Progetto successivo">
+            <a href={`/progetti/${props.next.id}/`} class="next">
+              <span class="mono muted">Progetto successivo</span>
+              <span class="next__t">{props.next.data.titolo}</span>
+            </a>
+          </nav>
+        )}
+      </article>
+    ) : (
+      <article class="studio wrap">
+        <nav class="mono studio__crumbs" aria-label="Percorso">
+          <a class="draw-link" href="/progetti/">Progetti</a> / <a class="draw-link" href="/progetti/studi/">Studi</a>
+        </nav>
+        <p class="tag tag--box tag--quota studio__flag">Studio concettuale, non realizzato</p>
+        <h1 class="h1 studio__title">{props.entry.data.titolo}</h1>
+        <p class="lead studio__sum">{props.entry.data.sintesi}</p>
+        <div class="studio__draw">
+          {props.entry.data.disegno === 'soglia' ? <SogliaDrawing id="soglia-page" draw="scrub" /> : <Esploso id="esploso-page" />}
+        </div>
+        <div class="studio__body">
+          <div class="prose">
+            {paras(props.entry.data.descrizione).map((p) => (
+              <p>{p}</p>
+            ))}
+          </div>
+          <aside aria-labelledby="mat-title">
+            <Cartiglio tavola="S" titolo={props.entry.data.titolo} nota="Non realizzato" />
+            <h2 class="mono muted studio__mh" id="mat-title">
+              Materiali dello studio
+            </h2>
+            <ul class="studio__mat" role="list">
+              {props.entry.data.materiali.map((m) => (
+                <li>{m}</li>
+              ))}
+            </ul>
+          </aside>
+        </div>
+        <p class="studio__back">
+          <a class="btn btn--ghost" href="/progetti/">Vedi i progetti realizzati</a>
+        </p>
+      </article>
+    )
+  }
+  <Closing />
+  <Lightbox />
+</Base>
+
+<style>
+  .proj__hero {
+    position: relative;
+    min-height: 88svh;
+    display: grid;
+    align-items: end;
+    color: var(--c-lucido);
+  }
+  .proj__img {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: var(--c-inchiostro);
+  }
+  .proj__img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .proj__img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(20 22 26 / 0.15) 30%, rgb(20 22 26 / 0.78));
+  }
+  .proj__over {
+    position: relative;
+    padding-block: calc(var(--nav-h) + var(--s-8)) var(--s-8);
+    display: grid;
+    gap: var(--s-4);
+  }
+  .proj__title {
+    max-width: 14ch;
+  }
+  .proj__sum {
+    max-width: 42ch;
+  }
+  .proj__crumbs a {
+    color: inherit;
+  }
+  .proj__body {
+    display: grid;
+    gap: var(--s-7) var(--gutter);
+    padding-block: var(--s-9);
+  }
+  @media (min-width: 960px) {
+    .proj__body {
+      grid-template-columns: 7fr 1fr 4fr;
+    }
+    .proj__aside {
+      grid-column: 3;
+    }
+  }
+  .proj__text {
+    font-size: var(--t-lead);
+    line-height: 1.5;
+  }
+  .proj__aside {
+    display: grid;
+    gap: var(--s-5);
+    align-content: start;
+  }
+  .proj__facts {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .proj__facts div {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--c-filo);
+    padding-bottom: var(--s-2);
+  }
+  .proj__h {
+    padding-bottom: var(--s-3);
+    border-bottom: 1px solid currentColor;
+    margin-bottom: var(--s-6);
+  }
+  .proj__fasi,
+  .proj__dis,
+  .proj__gal {
+    padding-bottom: var(--s-9);
+  }
+  .fasi {
+    display: grid;
+    gap: var(--gutter);
+    list-style: none;
+    padding: 0;
+  }
+  @media (min-width: 760px) {
+    .fasi {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .fase {
+    display: grid;
+    gap: var(--s-3);
+  }
+  .fase__n {
+    color: var(--c-quota-testo);
+  }
+  .fase__img,
+  .gal__link,
+  .dis__img {
+    display: block;
+    overflow: hidden;
+    background: var(--c-lucido-2);
+  }
+  .fase__img {
+    aspect-ratio: 4 / 3;
+  }
+  .fase__img :global(img),
+  .gal__link :global(img),
+  .dis__img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--d-3) var(--ease);
+  }
+  .fase__img:hover :global(img),
+  .gal__link:hover :global(img),
+  .dis__img:hover :global(img) {
+    transform: scale(1.025);
+  }
+  .dis {
+    display: grid;
+    gap: var(--gutter);
+  }
+  @media (min-width: 960px) {
+    .dis {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .dis__img {
+    aspect-ratio: 3 / 2;
+  }
+  .dis__img--draw :global(img) {
+    object-fit: contain;
+    background: #fff;
+  }
+  .gal {
+    display: grid;
+    gap: var(--s-6) var(--gutter);
+    list-style: none;
+    padding: 0;
+  }
+  @media (min-width: 760px) {
+    .gal {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .gal__item--wide {
+      grid-column: 1 / -1;
+    }
+    .gal__item--wide .gal__link {
+      aspect-ratio: 16 / 9;
+    }
+  }
+  .gal__link {
+    aspect-ratio: 4 / 3;
+  }
+  .proj__next {
+    padding-bottom: var(--s-8);
+  }
+  .next {
+    display: grid;
+    gap: var(--s-2);
+    padding-block: var(--s-6);
+    border-block: 1px solid currentColor;
+    text-decoration: none;
+  }
+  .next__t {
+    font-size: var(--t-h2);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    transition: padding-left var(--d-3) var(--ease);
+  }
+  .next:hover .next__t {
+    padding-left: var(--s-5);
+  }
+
+  .studio {
+    padding-top: calc(var(--nav-h) + var(--s-8));
+    padding-bottom: var(--s-9);
+  }
+  .studio__crumbs {
+    color: var(--c-grafite);
+  }
+  .studio__flag {
+    margin-top: var(--s-6);
+  }
+  .studio__title {
+    margin-top: var(--s-4);
+    max-width: 16ch;
+  }
+  .studio__sum {
+    margin-top: var(--s-4);
+    max-width: 46ch;
+  }
+  .studio__draw {
+    margin-block: var(--s-8);
+    padding: clamp(16px, 4vw, 64px);
+    border: 1px dashed var(--c-grafite);
+    background-image: linear-gradient(color-mix(in srgb, var(--c-filo) 50%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--c-filo) 50%, transparent) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .studio__body {
+    display: grid;
+    gap: var(--s-7) var(--gutter);
+  }
+  @media (min-width: 960px) {
+    .studio__body {
+      grid-template-columns: 7fr 4fr;
+    }
+  }
+  .studio__mh {
+    margin-top: var(--s-5);
+    font-size: var(--t-mono);
+  }
+  .studio__mat {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--s-3);
+  }
+  .studio__mat li {
+    padding-block: var(--s-2);
+    border-bottom: 1px solid var(--c-filo);
+  }
+  .studio__back {
+    margin-top: var(--s-8);
+  }
+</style>

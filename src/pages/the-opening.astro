@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ContactSheet from '../components/ContactSheet.astro';
+import Lightbox from '../components/Lightbox.astro';
+import Closing from '../components/Closing.astro';
+import { OPENING } from '../data/opening';
+import cover from '../assets/opening/mg_9942.jpg';
+---
+
+<Base
+  title="The Opening: l’inaugurazione"
+  description="Le foto dell’inaugurazione dello Space Concept D-Labdesign a Treviglio, giovedì 20 settembre 2012. Foto Melting Studio."
+  image={cover}
+  imageAlt="Il cortile dello showroom visto dall’alto durante l’inaugurazione."
+>
+  <PageHeader
+    title="The Opening"
+    lead="Lo Space Concept D-Labdesign è stato inaugurato giovedì 20 settembre 2012."
+    crumbs={[{ label: 'The Opening' }]}
+    tavola="O.01"
+    nota="20 · 09 · 2012"
+  />
+  <section class="wrap op section" aria-labelledby="op-title">
+    <h2 class="sr-only" id="op-title">La serata</h2>
+    <div class="prose op__text">
+      <p>
+        Oltre 200 invitati hanno partecipato alla serata di apertura, che ha avuto come media partner il mensile Qui Bergamo e il servizio di catering
+        del San Martino di Treviglio.
+      </p>
+      <p>Una serata emozionante, elegante e allo stesso tempo informale.</p>
+      <p><a class="link" href="/video/">Guarda il video dell’inaugurazione</a></p>
+    </div>
+  </section>
+  <section class="on-dark op__sheet section" aria-labelledby="provino-title">
+    <div class="wrap">
+      <h2 class="mono op__h" id="provino-title">Provino · {OPENING.credito}</h2>
+      <ContactSheet />
+    </div>
+  </section>
+  <Closing />
+  <Lightbox />
+</Base>
+
+<style>
+  .op__text {
+    font-size: var(--t-lead);
+  }
+  .op__h {
+    padding-bottom: var(--s-3);
+    border-bottom: 1px solid color-mix(in srgb, var(--c-lucido) 30%, transparent);
+    margin-bottom: var(--s-7);
+  }
+</style>

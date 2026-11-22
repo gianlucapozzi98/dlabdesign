@@ -1,0 +1,76 @@
+---
+/**
+ * Cartiglio: il riquadro dei titoli dei disegni tecnici.
+ * Fa da indicatore (tavola, titolo, nota) nel tour e da "timbro" nelle intestazioni.
+ */
+interface Props {
+  progetto?: string;
+  tavola: string;
+  titolo: string;
+  nota?: string;
+  scala?: string;
+  data?: string;
+  live?: boolean;
+  class?: string;
+  dark?: boolean;
+}
+const { progetto = 'D-Labdesign', tavola, titolo, nota = 'Schema', scala = '—', data, live = false, class: cls, dark = false } = Astro.props;
+---
+
+<div class:list={['cartiglio', cls, { 'cartiglio--dark': dark }]} aria-live={live ? 'polite' : undefined} data-cartiglio={live ? '' : undefined}>
+  <span class="c c--prog mono">{progetto}</span>
+  <span class="c c--tav mono"><span class="sr-only">Tavola </span><span aria-hidden="true">TAV. </span><span data-c-tav>{tavola}</span></span>
+  <span class="c c--tit" data-c-tit>{titolo}</span>
+  <span class="c c--nota mono" data-c-nota>{nota}</span>
+  <span class="c c--scala mono">{data ? data : <>Scala {scala}</>}</span>
+</div>
+
+<style>
+  .cartiglio {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    width: min(380px, 100%);
+    background: var(--c-lucido);
+    color: var(--c-inchiostro);
+    border: 1px solid var(--c-inchiostro);
+    font-size: 0.9375rem;
+    line-height: 1.2;
+  }
+  .cartiglio--dark {
+    background: var(--c-inchiostro);
+    color: var(--c-lucido);
+    border-color: color-mix(in srgb, var(--c-lucido) 60%, transparent);
+  }
+  .c {
+    padding: 7px 10px;
+    min-width: 0;
+  }
+  .mono.c {
+    font-size: 0.75rem;
+  }
+  .c--prog,
+  .c--nota {
+    border-right: 1px solid currentColor;
+  }
+  .c--tav,
+  .c--scala {
+    text-align: right;
+    white-space: nowrap;
+  }
+  .c--tav {
+    color: var(--c-quota-testo);
+  }
+  .cartiglio--dark .c--tav {
+    color: var(--c-quota-chiaro);
+  }
+  .c--tit {
+    grid-column: 1 / -1;
+    border-block: 1px solid currentColor;
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+    padding-block: 9px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>

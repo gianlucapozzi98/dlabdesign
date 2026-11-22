@@ -1,0 +1,211 @@
+---
+import { getCollection } from 'astro:content';
+import ProjectCard from './ProjectCard.astro';
+import SectionHead from './SectionHead.astro';
+import SogliaDrawing from './SogliaDrawing.astro';
+const progetti = (await getCollection('progetti')).sort((a, b) => a.data.ordine - b.data.ordine);
+---
+
+<section class="strip section" id="progetti" aria-labelledby="progetti-title" data-strip>
+  <div class="strip__pin">
+    <div class="wrap strip__head">
+      <SectionHead tav="07" title="Progetti" id="progetti-title" nota={`${progetti.length} realizzati · studi a parte`} />
+      <ul class="strip__filters" role="list">
+        <li><a class="btn btn--ghost" href="/progetti/casa/">Casa</a></li>
+        <li><a class="btn btn--ghost" href="/progetti/negozio/">Negozio</a></li>
+        <li><a class="btn btn--ghost" href="/progetti/studi/">Studi</a></li>
+      </ul>
+      <div class="strip__nav">
+        <button type="button" class="strip__arrow" data-strip-prev aria-label="Progetto precedente" aria-controls="strip-viewport"><span aria-hidden="true">←</span></button>
+        <button type="button" class="strip__arrow" data-strip-next aria-label="Progetto successivo" aria-controls="strip-viewport"><span aria-hidden="true">→</span></button>
+      </div>
+    </div>
+    <div class="strip__viewport" id="strip-viewport" data-strip-viewport tabindex="0" aria-label="Progetti: scorri in orizzontale" role="region">
+      <ol class="strip__track" role="list" data-strip-track>
+        {
+          progetti.map((p, i) => (
+            <li class="strip__item">
+              <ProjectCard p={p} index={i} />
+            </li>
+          ))
+        }
+        <li class="strip__item strip__item--studi">
+          <a class="studi-card" href="/progetti/studi/">
+            <span class="studi-card__label tag tag--box tag--quota">Studio concettuale, non realizzato</span>
+            <div class="studi-card__draw">
+              <SogliaDrawing id="soglia-strip" withElevation={false} />
+            </div>
+            <h3 class="studi-card__title">Studi</h3>
+            <p class="muted">Idee e disegni non realizzati: come ragioniamo su volumi e materiali.</p>
+            <span class="mono studi-card__cta" aria-hidden="true">Vedi gli studi</span>
+          </a>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { afterFirstImage } from '../scripts/ready';
+  afterFirstImage().then(() => import('../scripts/strip').then((m) => m.initStrip()));
+</script>
+
+<style>
+  .strip {
+    padding-bottom: var(--s-section);
+    overflow: clip;
+  }
+  .strip__head {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .strip__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+  .strip__viewport {
+    min-width: 0;
+    margin-top: var(--s-7);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    padding-bottom: var(--s-4);
+  }
+  .strip__viewport:focus-visible {
+    outline-offset: -2px;
+  }
+  .strip__track {
+    display: flex;
+    gap: clamp(20px, 3vw, 56px);
+    padding-inline: var(--margin);
+    width: max-content;
+  }
+  .strip__item {
+    width: min(78vw, 420px);
+    scroll-snap-align: start;
+    scroll-margin-left: var(--margin);
+  }
+  .strip__nav {
+    display: flex;
+    gap: var(--s-2);
+  }
+  .strip__arrow {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border: 1px solid color-mix(in srgb, currentColor 55%, transparent);
+    font-size: 1.25rem;
+    transition: border-color var(--d-2) var(--ease), background-color var(--d-2) var(--ease), opacity var(--d-2) var(--ease);
+  }
+  .strip__arrow:hover {
+    border-color: currentColor;
+    background: color-mix(in srgb, var(--c-inchiostro) 5%, transparent);
+  }
+  .strip__arrow:active {
+    transform: translateY(1px);
+  }
+  .strip__arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+  @media (min-width: 960px) {
+    .strip__item {
+      width: clamp(340px, 30vw, 500px);
+    }
+    .strip__head {
+      grid-template-columns: 1fr auto auto;
+      align-items: end;
+    }
+  }
+
+  /* --- versione fissata (solo con movimento, schermo largo e alto: vedi PIN_MQ in strip.ts) --- */
+  :global(.is-pinned).strip {
+    padding-top: 0;
+  }
+  :global(.is-pinned) .strip__pin {
+    height: 100svh;
+    display: grid;
+    /* la colonna non deve allargarsi fino alla larghezza della striscia (che è più larga dello schermo) */
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    align-content: start;
+    padding-top: calc(var(--nav-h) + var(--s-5));
+    background: var(--c-lucido);
+  }
+  :global(.is-pinned) .strip__nav {
+    display: none;
+  }
+  :global(.is-pinned) .strip__viewport {
+    overflow: visible;
+    margin-top: var(--s-5);
+    padding-bottom: 0;
+  }
+  /* la scheda si dimensiona anche sull'altezza: foto 4:5 + testi devono stare nello schermo */
+  :global(.is-pinned) .strip__item {
+    width: max(220px, min(clamp(280px, 26vw, 440px), (100svh - 510px) * 0.8));
+  }
+  :global(.is-pinned) .studi-card__draw {
+    height: calc(100svh - 560px);
+    min-height: 120px;
+    display: grid;
+    place-items: center;
+  }
+  :global(.is-pinned) .studi-card__draw :global(svg) {
+    max-height: 100%;
+    width: auto;
+  }
+  @media (max-height: 940px) {
+    :global(.is-pinned) .strip__item {
+      width: max(220px, min(clamp(280px, 26vw, 440px), (100svh - 400px) * 0.8));
+    }
+    :global(.is-pinned) .strip__item :global(.pcard__sum) {
+      display: none;
+    }
+    :global(.is-pinned) .strip__item :global(.pcard__title) {
+      font-size: 1.375rem;
+    }
+    :global(.is-pinned) .studi-card__draw {
+      padding: var(--s-2) var(--s-4);
+      height: calc(100svh - 500px);
+    }
+    :global(.is-pinned) .studi-card p {
+      display: none;
+    }
+  }
+  .studi-card {
+    display: grid;
+    gap: var(--s-3);
+    text-decoration: none;
+    height: 100%;
+    align-content: start;
+    padding: var(--s-5);
+    border: 1px dashed var(--c-grafite);
+    background: repeating-linear-gradient(0deg, transparent 0 23px, color-mix(in srgb, var(--c-filo) 45%, transparent) 23px 24px),
+      repeating-linear-gradient(90deg, transparent 0 23px, color-mix(in srgb, var(--c-filo) 45%, transparent) 23px 24px);
+    transition: border-color var(--d-2) var(--ease);
+  }
+  .studi-card:hover {
+    border-color: var(--c-inchiostro);
+  }
+  .studi-card__label {
+    justify-self: start;
+  }
+  .studi-card__draw {
+    padding: var(--s-4) var(--s-6);
+  }
+  .studi-card__title {
+    font-size: var(--t-h3);
+    font-weight: 450;
+  }
+  .studi-card__cta::before {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    width: 12px;
+    height: 1px;
+    margin-right: var(--s-2);
+    background: var(--c-quota);
+  }
+</style>

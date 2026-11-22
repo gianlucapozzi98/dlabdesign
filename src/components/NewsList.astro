@@ -1,0 +1,104 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+interface Props {
+  limit?: number;
+  headingLevel?: 'h2' | 'h3';
+}
+const { limit, headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+const all = (await getCollection('news')).sort((a, b) => b.data.data.getTime() - a.data.data.getTime());
+const news = limit ? all.slice(0, limit) : all;
+const fmt = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<ol class="news" role="list">
+  {
+    news.map((n) => (
+      <li class="news__item">
+        <a class="news__link" href={`/news/${n.id}/`}>
+          <time class="mono news__date" datetime={n.data.data.toISOString().slice(0, 10)}>
+            {fmt.format(n.data.data)}
+          </time>
+          <div class="news__body">
+            <H class="news__title">{n.data.titolo}</H>
+            {n.data.sintesi && <p class="news__sum">{n.data.sintesi}</p>}
+            {n.data.archivio && <span class="tag news__tag">Dall’archivio</span>}
+          </div>
+          {n.data.immagine ? (
+            <div class="news__img">
+              <Image src={n.data.immagine} alt="" widths={[200, 320]} sizes="160px" loading="lazy" format="avif" />
+            </div>
+          ) : (
+            <span class="news__img news__img--empty" aria-hidden="true" />
+          )}
+        </a>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .news {
+    list-style: none;
+    padding: 0;
+    border-top: 1px solid currentColor;
+  }
+  .news__item {
+    border-bottom: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  }
+  .news__link {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--s-3);
+    padding-block: var(--s-5);
+    text-decoration: none;
+    transition: padding-left var(--d-2) var(--ease);
+  }
+  .news__link:hover {
+    padding-left: var(--s-3);
+  }
+  @media (min-width: 760px) {
+    .news__link {
+      grid-template-columns: 14rem 1fr 160px;
+      align-items: start;
+    }
+  }
+  .news__date {
+    color: var(--c-quota-testo);
+  }
+  .news__title {
+    font-size: var(--t-h3);
+    font-weight: 420;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .news__sum {
+    margin-top: var(--s-2);
+    color: var(--c-grafite);
+    max-width: 52ch;
+  }
+  .news__tag {
+    margin-top: var(--s-3);
+    color: var(--c-grafite);
+  }
+  .news__img {
+    display: none;
+  }
+  @media (min-width: 760px) {
+    .news__img {
+      display: block;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      background: var(--c-lucido-2);
+    }
+    .news__img :global(img) {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .news__img--empty {
+      background: repeating-linear-gradient(45deg, transparent 0 8px, color-mix(in srgb, var(--c-filo) 70%, transparent) 8px 9px);
+    }
+  }
+</style>

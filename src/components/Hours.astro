@@ -1,0 +1,76 @@
+---
+import { ORARI, SITE } from '../data/site';
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<table class:list={['hours', { 'hours--compact': compact }]}>
+  <caption class="sr-only">Orari dello showroom</caption>
+  <tbody>
+    {
+      ORARI.map((g) => (
+        <tr>
+          <th scope="row">
+            <span class:list={[{ 'only-desktop': compact }]}>{g.giorno}</span>
+            {compact && (
+              <span class="only-mobile" aria-hidden="true">
+                {g.breve}
+              </span>
+            )}
+          </th>
+          <td>
+            {g.appuntamento ? (
+              <a class="link" href={SITE.appuntamenti.href}>
+                Su appuntamento
+              </a>
+            ) : g.daConfermare ? (
+              <span class="placeholder">da confermare</span>
+            ) : (
+              g.fasce.map(([a, b], i) => (
+                <>
+                  {i > 0 && <span class="sep"> · </span>}
+                  <span class="nowrap">
+                    <time>{a}</time>–<time>{b}</time>
+                  </span>
+                </>
+              ))
+            )}
+          </td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+
+<style>
+  .hours {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 0.55em 0;
+    border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+    vertical-align: baseline;
+  }
+  th {
+    font-weight: 500;
+    padding-right: var(--s-4);
+    white-space: nowrap;
+  }
+  td {
+    text-align: right;
+  }
+  .hours--compact th,
+  .hours--compact td {
+    padding: 0.35em 0;
+    font-size: 1rem;
+  }
+  .sep {
+    opacity: 0.5;
+  }
+</style>

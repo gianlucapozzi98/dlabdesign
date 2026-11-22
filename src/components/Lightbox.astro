@@ -1,0 +1,97 @@
+---
+/** Visore a pieno schermo, accessibile: <dialog>, frecce, Esc, focus che torna al punto di partenza. */
+---
+
+<dialog class="lb" data-lb-dialog aria-label="Foto a pieno schermo">
+  <div class="lb__bar">
+    <p class="mono lb__count" aria-live="polite"><span data-lb-i>1</span> / <span data-lb-n>1</span></p>
+    <button type="button" class="lb__btn" data-lb-close aria-label="Chiudi">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <figure class="lb__fig">
+    <img data-lb-img alt="" decoding="async" />
+    <figcaption class="lb__cap" data-lb-cap></figcaption>
+  </figure>
+  <button type="button" class="lb__btn lb__prev" data-lb-prev aria-label="Foto precedente"><span aria-hidden="true">←</span></button>
+  <button type="button" class="lb__btn lb__next" data-lb-next aria-label="Foto successiva"><span aria-hidden="true">→</span></button>
+</dialog>
+
+<script>
+  import { initLightbox } from '../scripts/lightbox';
+  initLightbox();
+</script>
+
+<style>
+  .lb {
+    width: 100vw;
+    height: 100svh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgb(14 15 18 / 0.97);
+    color: var(--c-lucido);
+  }
+  .lb[open] {
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+  .lb::backdrop {
+    background: rgb(14 15 18 / 0.8);
+  }
+  .lb__bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--s-3) var(--margin);
+  }
+  .lb__fig {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: var(--s-3);
+    min-height: 0;
+    padding: 0 var(--margin) var(--s-5);
+  }
+  .lb__fig img {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    object-fit: contain;
+  }
+  .lb__cap {
+    max-width: 70ch;
+    color: var(--c-grafite-chiaro);
+    font-size: var(--t-small);
+  }
+  .lb__btn {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    font-size: 1.6rem;
+    color: var(--c-lucido);
+    border: 1px solid color-mix(in srgb, var(--c-lucido) 35%, transparent);
+    background: rgb(14 15 18 / 0.6);
+    transition: border-color var(--d-2) var(--ease), background-color var(--d-2) var(--ease);
+  }
+  .lb__btn:hover {
+    border-color: var(--c-lucido);
+  }
+  .lb__btn:focus-visible {
+    outline-color: var(--c-quota-chiaro);
+  }
+  .lb__prev,
+  .lb__next {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+  }
+  .lb__prev {
+    left: var(--s-3);
+  }
+  .lb__next {
+    right: var(--s-3);
+  }
+</style>

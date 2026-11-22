@@ -1,0 +1,164 @@
+---
+/**
+ * Modulo appuntamento / informazioni.
+ * - Con PUBLIC_FORM_ENDPOINT: invio reale (POST multipart), conferma SOLO con risposta 2xx.
+ * - Senza endpoint: prepara un'email (mailto:) e lo dice chiaramente. Mai "inviato" senza backend.
+ * Honeypot anti-spam, validazione accessibile, consenso privacy obbligatorio, newsletter separata.
+ */
+import { SITE } from '../data/site';
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT || '';
+const giorni = ['Lunedì pomeriggio', 'Martedì (su appuntamento)', 'Mercoledì (su appuntamento)', 'Giovedì pomeriggio', 'Venerdì', 'Sabato'];
+---
+
+<form class="aform" data-aform data-endpoint={endpoint} data-email={SITE.email} novalidate aria-describedby="aform-mode">
+  <p id="aform-mode" class="aform__mode mono">
+    {endpoint ? 'La richiesta arriva direttamente allo showroom.' : 'Invio tramite email: alla fine si apre il tuo programma di posta con il messaggio pronto.'}
+  </p>
+
+  <div class="aform__err" data-aform-summary tabindex="-1" hidden>
+    <p><strong>Controlla questi campi:</strong></p>
+    <ul data-aform-list></ul>
+  </div>
+
+  <fieldset class="field aform__tipo">
+    <legend>Cosa ti serve</legend>
+    <label class="check"><input type="radio" name="tipo" value="Appuntamento in showroom" checked /> <span>Un appuntamento in showroom</span></label>
+    <label class="check"><input type="radio" name="tipo" value="Informazioni" /> <span>Informazioni</span></label>
+  </fieldset>
+
+  <div class="aform__row">
+    <div class="field">
+      <label for="f-nome">Nome e cognome</label>
+      <input id="f-nome" name="nome" type="text" autocomplete="name" required aria-describedby="e-nome" />
+      <p class="err" id="e-nome" hidden>Scrivi il tuo nome.</p>
+    </div>
+    <div class="field">
+      <label for="f-tel">Telefono</label>
+      <input id="f-tel" name="telefono" type="tel" autocomplete="tel" inputmode="tel" required aria-describedby="h-tel e-tel" />
+      <p class="hint" id="h-tel">Ti richiamiamo per confermare.</p>
+      <p class="err" id="e-tel" hidden>Scrivi un numero di telefono valido.</p>
+    </div>
+  </div>
+  <div class="field">
+    <label for="f-email">Email <span class="muted">(facoltativa)</span></label>
+    <input id="f-email" name="email" type="email" autocomplete="email" aria-describedby="e-email" />
+    <p class="err" id="e-email" hidden>L’indirizzo email non sembra corretto.</p>
+  </div>
+  <div class="aform__row">
+    <div class="field">
+      <label for="f-giorno">Giorno preferito</label>
+      <select id="f-giorno" name="giorno">
+        <option value="">Nessuna preferenza</option>
+        {giorni.map((g) => <option>{g}</option>)}
+      </select>
+    </div>
+    <div class="field">
+      <label for="f-fascia">Fascia</label>
+      <select id="f-fascia" name="fascia">
+        <option value="">Nessuna preferenza</option>
+        <option>Mattina</option>
+        <option>Pomeriggio</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label for="f-msg">Di cosa vuoi parlare? <span class="muted">(facoltativo)</span></label>
+    <textarea id="f-msg" name="messaggio" rows="4" maxlength="2000"></textarea>
+  </div>
+
+  <div class="hp" aria-hidden="true">
+    <label for="f-sito">Non compilare questo campo</label>
+    <input id="f-sito" name="sito_web" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <label class="check aform__privacy">
+    <input type="checkbox" name="privacy" value="si" required aria-describedby="e-privacy" />
+    <span>Ho letto l’<a class="link" href="/privacy/" target="_blank">informativa privacy<span class="sr-only"> (si apre in una nuova scheda)</span></a> e accetto che i miei dati siano usati per rispondere a questa richiesta.</span>
+  </label>
+  <p class="err" id="e-privacy" hidden>Serve il consenso per poterti rispondere.</p>
+
+  <div class="aform__send">
+    <button type="submit" class="btn" data-aform-btn>
+      <span data-aform-label>{endpoint ? 'Invia la richiesta' : 'Prepara l’email'}</span>
+    </button>
+    <p class="aform__alt">Oppure chiama <a class="link" href={SITE.appuntamenti.href}>{SITE.appuntamenti.testo}</a></p>
+  </div>
+  <div class="aform__status" data-aform-status role="status" aria-live="polite"></div>
+</form>
+
+<script>
+  import { initForms } from '../scripts/forms';
+  initForms();
+</script>
+
+<style>
+  .aform {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .aform__mode {
+    color: var(--c-grafite);
+    text-transform: none;
+    letter-spacing: 0.01em;
+  }
+  .aform__row {
+    display: grid;
+    gap: var(--s-5);
+  }
+  @media (min-width: 640px) {
+    .aform__row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .aform__tipo {
+    border: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3) var(--s-6);
+  }
+  .aform__tipo legend {
+    margin-bottom: var(--s-3);
+    width: 100%;
+  }
+  .aform__privacy {
+    font-size: var(--t-small);
+  }
+  .aform__send {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-4);
+    align-items: center;
+  }
+  .aform__alt {
+    font-size: var(--t-small);
+    color: var(--c-grafite);
+  }
+  .aform__err {
+    border-left: 3px solid var(--c-quota-testo);
+    padding: var(--s-3) var(--s-4);
+    background: color-mix(in srgb, var(--c-quota) 7%, transparent);
+    color: var(--c-quota-testo);
+  }
+  .aform__err ul {
+    margin-top: var(--s-2);
+    padding-left: 1.2em;
+  }
+  .aform__err a {
+    color: inherit;
+  }
+  .aform__status:not(:empty) {
+    padding: var(--s-4);
+    border: 1px solid currentColor;
+  }
+  .aform__status[data-state='ok'] {
+    border-color: var(--c-inchiostro);
+  }
+  .aform__status[data-state='error'] {
+    color: var(--c-quota-testo);
+  }
+  .aform[aria-busy='true'] [data-aform-btn] {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+</style>

@@ -1,0 +1,59 @@
+---
+/** Intestazione di sezione come una riga di cartiglio: TAV. nn — titolo — nota. */
+interface Props {
+  tav?: string;
+  title: string;
+  id: string;
+  nota?: string;
+  level?: 'h1' | 'h2';
+  size?: 'h1' | 'h2' | 'h3' | 'mega';
+  class?: string;
+}
+const { tav, title, id, nota, level = 'h2', size = 'h2', class: cls } = Astro.props;
+const H = level;
+---
+
+<div class:list={['shead', cls]}>
+  <div class="shead__rule" aria-hidden={tav || nota ? undefined : 'true'}>
+    {tav && <span class="mono shead__tav">TAV. {tav}</span>}
+    <span class="shead__line"></span>
+    {nota && <span class="mono shead__nota">{nota}</span>}
+  </div>
+  <H class:list={[size === 'mega' ? 'h-mega' : size, 'shead__title']} id={id}>{title}</H>
+  <slot />
+</div>
+
+<style>
+  .shead {
+    display: grid;
+    gap: var(--s-5);
+  }
+  .shead__rule {
+    display: flex;
+    align-items: center;
+    gap: var(--s-4);
+  }
+  .shead__tav {
+    color: var(--c-quota-testo);
+    white-space: nowrap;
+  }
+  :global(.on-dark) .shead__tav {
+    color: var(--c-quota-chiaro);
+  }
+  .shead__line {
+    flex: 1 1 24px;
+    min-width: 24px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.28;
+  }
+  .shead__nota {
+    color: var(--c-text-2, var(--c-grafite));
+    min-width: 0;
+    text-align: right;
+    flex: 0 1 auto;
+  }
+  .shead__title {
+    max-width: 18ch;
+  }
+</style>

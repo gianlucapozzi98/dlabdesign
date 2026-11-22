@@ -1,0 +1,613 @@
+---
+/**
+ * TOUR D'INGRESSO — "Lucido": rilievo in registro sulla foto vera.
+ * - Con movimento: sezione alta, fissa (sticky), guidata dallo scroll (src/scripts/tour.ts).
+ * - Senza movimento / senza JS: le 4 foto in colonna con le descrizioni in testo.
+ * La prima foto è nel markup, eager e ad alta priorità: il tour non blocca il sito.
+ */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import tour from '../data/tour.json';
+import { CTA } from '../data/site';
+
+const images = import.meta.glob<{ default: ImageMetadata }>('../assets/tour/tour-0*.jpg', { eager: true });
+const lines = import.meta.glob<string>('../assets/tour/*.lines.svg', { eager: true, query: '?raw', import: 'default' });
+
+type Hotspot = { x: number; y: number; etichetta: string; testo: string };
+type Scene = (typeof tour.scenes)[number] & { door?: number[]; hotspots?: Hotspot[] };
+
+const scenes = (tour.scenes as Scene[]).map((s, i) => {
+  const img = images[`../assets/tour/${s.id}.jpg`]?.default;
+  if (!img) throw new Error(`Foto del tour mancante: src/assets/tour/${s.id}.jpg`);
+  const svg = lines[`../assets/tour/${s.id}.lines.svg`] ?? '';
+  // solo i tracciati, con pathLength=1 per il tracciamento
+  const paths = [...svg.matchAll(/<path class="([ps])" d="([^"]+)"\/>/g)].map((m) => ({ cls: m[1], d: m[2] }));
+  return { ...s, i, img, paths, w: img.width, h: img.height };
+});
+const total = String(scenes.length).padStart(2, '0');
+---
+
+<section class="tour" id="tour" aria-labelledby="tour-title" data-tour data-total={scenes.length}>
+  <div class="tour__pin">
+    <div class="tour__stage" data-stage>
+      {
+        scenes.map((s) => (
+          <figure
+            class="scene"
+            data-scene={s.i}
+            style={`--ar:${s.w}/${s.h};--fx:${s.focus[0]};--fy:${s.focus[1]}`}
+            data-focus={s.focus.join(',')}
+            data-door={s.door?.join(',')}
+            aria-labelledby={`scene-${s.i}-title`}
+          >
+            <div class="plate" data-plate>
+              <Picture
+                src={s.img}
+                formats={['avif', 'webp']}
+                widths={[640, s.w]}
+                sizes="100vw"
+                quality={s.i === 0 ? 46 : 56}
+                alt={s.alt}
+                loading={s.i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={s.i === 0 ? 'high' : 'low'}
+                decoding={s.i === 0 ? 'sync' : 'async'}
+                class="plate__img"
+              />
+              {s.i === 0 && <div class="plate__veil" aria-hidden="true" />}
+              <svg
+                class="plate__lines"
+                viewBox={`0 0 ${s.w} ${s.h}`}
+                preserveAspectRatio="none"
+                aria-hidden="true"
+                focusable="false"
+              >
+                {s.paths.map((p) => (
+                  <path class={p.cls} d={p.d} pathLength="1" />
+                ))}
+              </svg>
+              {s.door && (
+                <svg class="plate__door" viewBox={`0 0 ${s.w} ${s.h}`} preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                  <rect
+                    x={s.door[0] * s.w}
+                    y={s.door[1] * s.h}
+                    width={s.door[2] * s.w}
+                    height={s.door[3] * s.h}
+                    pathLength="1"
+                  />
+                </svg>
+              )}
+              {s.hotspots && (
+                <ul class="hotspots" role="list" aria-label="Punti di interesse nella foto">
+                  {s.hotspots.map((h, k) => (
+                    <li class:list={['hotspot', { 'hotspot--left': h.x > 0.6 }]} style={`left:${h.x * 100}%;top:${h.y * 100}%`}>
+                      <button
+                        type="button"
+                        class="hotspot__btn"
+                        aria-expanded="false"
+                        aria-controls={`hs-${s.i}-${k}`}
+                        data-cursor
+                      >
+                        <span class="hotspot__dot" aria-hidden="true" />
+                        <span class="hotspot__label mono">{h.etichetta}</span>
+                      </button>
+                      <p class="hotspot__text" id={`hs-${s.i}-${k}`} hidden>
+                        {h.testo}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <figcaption class="scene__cap">
+              <span class="mono tag--quota">
+                TAV. {s.tavola}/{total}
+              </span>
+              <span class="scene__title" id={`scene-${s.i}-title`}>
+                {s.titolo} <span class="muted">— {s.luogo}</span>
+              </span>
+              <span class="scene__desc">{s.alt}</span>
+            </figcaption>
+          </figure>
+        ))
+      }
+      <div class="tour__wipe" aria-hidden="true"></div>
+    </div>
+
+    <div class="tour__sheet" aria-hidden="true">
+      <span class="tour__mark tour__mark--tl"></span>
+      <span class="tour__mark tour__mark--tr"></span>
+      <span class="tour__mark tour__mark--bl"></span>
+      <span class="tour__mark tour__mark--br"></span>
+    </div>
+
+    <div class="tour__intro" data-intro>
+      <p class="mono tour__kicker">D-Labdesign · Treviglio</p>
+      <h1 class="tour__title h1" id="tour-title">Dove volumi e materiali si incontrano.</h1>
+      <div class="tour__actions btn-row">
+        <a class="btn" href="#tour-passi" data-tour-enter>Entra</a>
+        <a class="btn btn--ghost" href="#il-lab" data-tour-skip>Salta il tour</a>
+        <a class="btn btn--ghost tour__cta" href={CTA.href}>{CTA.label}</a>
+      </div>
+    </div>
+
+    <div class="tour__hud">
+      <nav class="tour__steps" id="tour-passi" aria-label="Tappe del tour">
+        <ol role="list">
+          {
+            scenes.map((s) => (
+              <li>
+                <button type="button" class="tour__step" data-step={s.i} aria-current={s.i === 0 ? 'step' : undefined}>
+                  <span class="mono" aria-hidden="true">{s.tavola}</span>
+                  <span class="sr-only">Tappa {s.tavola} di {total}: {s.titolo}</span>
+                </button>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+    </div>
+    <div class="tour__progress" aria-hidden="true"><span data-progress></span></div>
+  </div>
+</section>
+
+<script>
+  import { afterFirstImage } from '../scripts/ready';
+  afterFirstImage().then(() => import('../scripts/tour').then((m) => m.initTour()));
+</script>
+
+<style>
+  /* ---------------- Versione statica (default, senza movimento) ---------------- */
+  .tour {
+    position: relative;
+    padding: calc(var(--nav-h) + var(--s-6)) var(--margin) var(--s-8);
+    background: var(--c-lucido);
+  }
+  .tour__pin {
+    display: flex;
+    flex-direction: column;
+  }
+  .tour__stage {
+    order: 2;
+    display: grid;
+    gap: var(--s-8);
+    margin-top: var(--s-7);
+  }
+  .tour__intro {
+    order: 1;
+    max-width: 18ch;
+  }
+  .tour__intro .tour__actions {
+    margin-top: var(--s-6);
+  }
+  .tour__title {
+    margin-top: var(--s-4);
+    max-width: 14ch;
+  }
+  .tour__kicker {
+    color: var(--c-grafite);
+  }
+  .tour__hud {
+    order: 3;
+    margin-top: var(--s-7);
+    display: grid;
+    gap: var(--s-5);
+  }
+  .tour__sheet,
+  .plate__veil,
+  .tour__wipe,
+  .tour__progress,
+  .tour__steps,
+  .plate__door {
+    display: none;
+  }
+  .scene {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .plate {
+    position: relative;
+    aspect-ratio: var(--ar);
+    overflow: hidden;
+    background: var(--c-lucido-2);
+  }
+  .plate :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .plate__lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    mix-blend-mode: difference;
+    pointer-events: none;
+  }
+  .plate__lines path {
+    stroke: #fff;
+    fill: none;
+    stroke-linecap: square;
+  }
+  /* spessori in unità della foto (1000 px): ~1,2 px e ~0,7 px a schermo */
+  .plate__lines .p {
+    stroke-width: 1.35;
+  }
+  .plate__lines .s {
+    stroke-width: 0.8;
+    opacity: 0.8;
+  }
+  .scene__cap {
+    display: grid;
+    gap: var(--s-2);
+    max-width: var(--measure);
+  }
+  .scene__title {
+    font-size: var(--t-h3);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .scene__desc {
+    color: var(--c-grafite);
+  }
+  .hotspots {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  /* il centro del punto cade esattamente sul dettaglio della foto */
+  .hotspot {
+    position: absolute;
+    translate: -19px -50%;
+    pointer-events: auto;
+  }
+  .hotspot--left {
+    translate: calc(-100% + 19px) -50%;
+  }
+  .hotspot--left .hotspot__btn {
+    flex-direction: row-reverse;
+    padding: 0 var(--s-2) 0 var(--s-3);
+  }
+  .hotspot--left .hotspot__text {
+    left: auto;
+    right: 0;
+    border-left: 0;
+    border-right: 2px solid var(--c-quota);
+  }
+  .hotspot__btn {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 var(--s-3) 0 var(--s-2);
+    color: var(--c-inchiostro);
+  }
+  .hotspot__dot {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--c-lucido);
+    background: color-mix(in srgb, var(--c-inchiostro) 35%, transparent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--c-lucido) 22%, transparent);
+    transition: transform var(--d-2) var(--ease), background-color var(--d-2) var(--ease);
+  }
+  .hotspot__dot::before,
+  .hotspot__dot::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 9px;
+    height: 1px;
+    background: var(--c-lucido);
+    translate: -50% -50%;
+    transition: rotate var(--d-2) var(--ease);
+  }
+  .hotspot__dot::after {
+    rotate: 90deg;
+  }
+  .hotspot__btn[aria-expanded='true'] .hotspot__dot::after {
+    rotate: 0deg;
+  }
+  .hotspot__btn:hover .hotspot__dot {
+    transform: scale(1.12);
+    background: var(--c-quota);
+  }
+  .hotspot__label {
+    padding: 0.3em 0.55em;
+    background: var(--c-lucido);
+    color: var(--c-inchiostro);
+    font-size: 0.8125rem;
+    white-space: nowrap;
+  }
+  .hotspot__text {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 6px);
+    width: min(260px, 60vw);
+    padding: var(--s-3) var(--s-4);
+    background: var(--c-lucido);
+    color: var(--c-inchiostro);
+    font-size: var(--t-small);
+    line-height: 1.45;
+    border-left: 2px solid var(--c-quota);
+  }
+  .tour__steps ol {
+    display: flex;
+    gap: var(--s-2);
+  }
+
+  /* ---------------- Versione animata (html.motion) ---------------- */
+  :global(.motion) .tour {
+    height: 520svh;
+    padding: 0;
+  }
+  @media (max-width: 759px) {
+    :global(.motion) .tour {
+      height: 430svh;
+    }
+  }
+  :global(.motion) .tour__pin {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+    display: block;
+    /* margini della "tavola" iniziale */
+    --mt: calc(var(--nav-h) + 12px);
+    --ms: var(--margin);
+    --mb: clamp(190px, 30svh, 290px);
+  }
+  @media (min-width: 960px) {
+    :global(.motion) .tour__pin {
+      --mb: clamp(150px, 26svh, 250px);
+    }
+  }
+  :global(.motion) .tour__stage {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    display: block;
+    container-type: size;
+    clip-path: inset(var(--mt) var(--ms) var(--mb) var(--ms));
+    background: var(--c-lucido-2);
+  }
+  :global(.motion) .scene {
+    position: absolute;
+    inset: 0;
+    display: block;
+    transform-origin: calc(var(--fx) * 100%) calc(var(--fy) * 100%);
+    will-change: transform, opacity;
+  }
+  :global(.motion) .scene:not([data-scene='0']) {
+    opacity: 0;
+    visibility: hidden;
+  }
+  /* le scene 2–4 entrano nel layout (e si scaricano) solo quando lo script del tour è pronto */
+  :global(.motion) .tour:not(.is-live) .scene:not([data-scene='0']) {
+    display: none;
+  }
+  :global(.motion) .plate {
+    /* cover in CSS puro (unità del contenitore), con il punto focale centrato se possibile */
+    --pw: max(100cqw, 100cqh * var(--ar));
+    --ph: max(100cqh, 100cqw / (var(--ar)));
+    --ox: clamp((100cqw - var(--pw)) / 2, (0.5 - var(--fx)) * var(--pw), (var(--pw) - 100cqw) / 2);
+    --oy: clamp((100cqh - var(--ph)) / 2, (0.5 - var(--fy)) * var(--ph), (var(--ph) - 100cqh) / 2);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--pw);
+    height: var(--ph);
+    aspect-ratio: auto;
+    transform: translate(calc(-50% + var(--ox)), calc(-50% + var(--oy)));
+  }
+  :global(.motion) .scene__cap {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  :global(.motion) .plate__lines path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  :global(.motion) .plate__door {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  :global(.motion) .plate__door rect {
+    fill: none;
+    stroke: var(--c-quota);
+    stroke-width: 2.2;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  :global(.motion) .hotspot {
+    opacity: 0;
+    visibility: hidden;
+  }
+  :global(.motion) .plate__veil {
+    display: block;
+    position: absolute;
+    inset: 0;
+    background: var(--c-lucido);
+    opacity: 0.7;
+    pointer-events: none;
+    transform-origin: 50% 0;
+  }
+  :global(.motion) .tour__wipe {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 100%;
+    width: 1.5px;
+    background: var(--c-quota);
+    box-shadow: 0 0 0 0.5px color-mix(in srgb, var(--c-quota) 40%, transparent);
+    opacity: 0;
+  }
+
+  /* la tavola: segni di taglio intorno alla foto iniziale */
+  :global(.motion) .tour__sheet {
+    display: block;
+    position: absolute;
+    inset: var(--mt) var(--ms) var(--mb) var(--ms);
+    pointer-events: none;
+    color: var(--c-grafite);
+  }
+  .tour__mark {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+  }
+  .tour__mark::before,
+  .tour__mark::after {
+    content: '';
+    position: absolute;
+    background: currentColor;
+  }
+  .tour__mark::before {
+    width: 100%;
+    height: 1px;
+    top: 50%;
+  }
+  .tour__mark::after {
+    height: 100%;
+    width: 1px;
+    left: 50%;
+  }
+  .tour__mark--tl {
+    left: -14px;
+    top: -14px;
+  }
+  .tour__mark--tr {
+    right: -14px;
+    top: -14px;
+  }
+  .tour__mark--bl {
+    left: -14px;
+    bottom: -14px;
+  }
+  .tour__mark--br {
+    right: -14px;
+    bottom: -14px;
+  }
+
+  :global(.motion) .tour__intro {
+    position: absolute;
+    left: var(--ms);
+    right: var(--ms);
+    bottom: 0;
+    height: var(--mb);
+    max-width: none;
+    padding-top: var(--s-4);
+    display: grid;
+    align-content: start;
+    gap: var(--s-3);
+    z-index: 3;
+  }
+  :global(.motion) .tour__title {
+    margin: 0;
+    max-width: 21ch;
+    font-size: clamp(2.1rem, 0.7rem + 3.5vw, 4.75rem);
+    line-height: 0.96;
+  }
+  :global(.motion) .tour__intro .tour__actions {
+    margin-top: var(--s-2);
+  }
+  @media (min-width: 960px) {
+    :global(.motion) .tour__intro {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-rows: auto 1fr;
+      column-gap: var(--s-7);
+      padding-top: var(--s-5);
+    }
+    :global(.motion) .tour__kicker {
+      grid-column: 1 / -1;
+    }
+    :global(.motion) .tour__title {
+      grid-column: 1;
+    }
+    :global(.motion) .tour__intro .tour__actions {
+      grid-column: 2;
+      grid-row: 2;
+      align-self: start;
+      justify-content: flex-end;
+      margin: 0;
+      padding-top: 0.6rem;
+      max-width: 34rem;
+    }
+  }
+  @media (max-width: 759px) {
+    :global(.motion) .tour__cta {
+      display: none;
+    }
+  }
+
+  :global(.motion) .tour__hud {
+    position: absolute;
+    right: var(--ms);
+    bottom: calc(var(--s-5));
+    margin: 0;
+    z-index: 4;
+    display: grid;
+    justify-items: end;
+    gap: var(--s-3);
+    opacity: 0;
+    pointer-events: none;
+  }
+  :global(.motion) .tour__hud:focus-within {
+    opacity: 1 !important;
+  }
+  :global(.motion) .tour__steps {
+    display: block;
+  }
+  .tour__step {
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 8px;
+    background: var(--c-lucido);
+    color: var(--c-grafite);
+    border: 1px solid var(--c-filo);
+    transition: background-color var(--d-2) var(--ease), color var(--d-2) var(--ease), border-color var(--d-2) var(--ease);
+  }
+  .tour__step .mono {
+    font-size: 0.8125rem;
+  }
+  .tour__step:hover {
+    color: var(--c-inchiostro);
+    border-color: var(--c-grafite);
+  }
+  .tour__step[aria-current='step'] {
+    background: var(--c-inchiostro);
+    color: var(--c-lucido);
+    border-color: var(--c-inchiostro);
+  }
+  :global(.motion) .tour__progress {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: color-mix(in srgb, var(--c-inchiostro) 10%, transparent);
+    z-index: 5;
+  }
+  .tour__progress span {
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: var(--c-quota);
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+  }
+</style>

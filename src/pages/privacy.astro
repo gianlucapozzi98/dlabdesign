@@ -1,0 +1,58 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+import { SITE } from '../data/site';
+const s = SITE.societa;
+---
+
+<LegalPage title="Informativa privacy" description="Informativa sul trattamento dei dati personali (art. 13 GDPR) del sito D-Labdesign. Bozza da validare.">
+  <p>Questa informativa spiega come trattiamo i dati personali di chi usa questo sito, ai sensi dell’articolo 13 del Regolamento (UE) 2016/679 (GDPR).</p>
+
+  <h2>1. Titolare del trattamento</h2>
+  <p>
+    {s.ragioneSociale} <span class="placeholder">ragione sociale da verificare con visura</span>, sede legale {s.sedeLegale}, P.IVA e C.F. {s.piva}.
+    Showroom D-Labdesign: {SITE.showroom.via}, {SITE.showroom.cap} {SITE.showroom.citta} ({SITE.showroom.provincia}).
+    Email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>, telefono {SITE.telefono.testo}. PEC <span class="placeholder">da inserire</span>.
+  </p>
+
+  <h2>2. Quali dati trattiamo</h2>
+  <ul>
+    <li><strong>Dati che ci scrivi nei moduli</strong>: nome, telefono, email (facoltativa), preferenze di giorno e fascia oraria, il testo del messaggio.</li>
+    <li><strong>Dati tecnici di navigazione</strong>: indirizzo IP e informazioni del browser trattati dai server che ospitano il sito per farlo funzionare e proteggerlo.</li>
+    <li><strong>La tua scelta sui cookie</strong>, salvata nel tuo browser.</li>
+  </ul>
+
+  <h2>3. Perché li trattiamo e su quale base</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th scope="col">Finalità</th><th scope="col">Base giuridica</th><th scope="col">Conservazione</th></tr></thead>
+      <tbody>
+        <tr><td>Rispondere a richieste di appuntamento e di informazioni</td><td>Misure precontrattuali su tua richiesta (art. 6.1.b GDPR)</td><td>Il tempo necessario a gestire la richiesta, poi <span class="placeholder">[da definire, es. 12 mesi]</span></td></tr>
+        <tr><td>Newsletter (iscrizione sulla pagina del servizio esterno)</td><td>Consenso (art. 6.1.a), revocabile in ogni momento</td><td>Fino alla revoca</td></tr>
+        <tr><td>Video e mappa da servizi esterni, solo dopo il consenso</td><td>Consenso (art. 6.1.a)</td><td>Secondo le policy dei fornitori</td></tr>
+        <tr><td>Statistiche delle visite, se attivate</td><td>Consenso (art. 6.1.a) o, se senza cookie e anonime, legittimo interesse <span class="placeholder">[da verificare]</span></td><td><span class="placeholder">[da definire]</span></td></tr>
+        <tr><td>Sicurezza e funzionamento del sito</td><td>Legittimo interesse (art. 6.1.f)</td><td><span class="placeholder">[da definire con l’hosting]</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>4. A chi possono arrivare i dati</h2>
+  <ul>
+    <li>Fornitore di hosting del sito: <span class="placeholder">[da inserire]</span>.</li>
+    <li>Servizio che riceve i moduli, se attivato: <span class="placeholder">[da inserire]</span>. Se il modulo prepara un’email, il messaggio parte dal tuo programma di posta.</li>
+    <li>Newsletter: servizio Invionews <span class="placeholder">[da confermare]</span>.</li>
+    <li>Dopo il tuo consenso: YouTube (Google Ireland Ltd / Google LLC) per i video, OpenStreetMap Foundation per la mappa.</li>
+  </ul>
+  <p>Alcuni fornitori possono trasferire dati fuori dall’Unione europea (per esempio Google LLC negli Stati Uniti), con le garanzie previste dal GDPR come il Data Privacy Framework UE-USA o le clausole contrattuali standard.</p>
+
+  <h2>5. I tuoi diritti</h2>
+  <p>
+    Puoi chiedere accesso, rettifica, cancellazione, limitazione, portabilità e opporti al trattamento (artt. 15–22 GDPR) scrivendo a{' '}
+    <a href={`mailto:${SITE.email}`}>{SITE.email}</a>. Puoi revocare il consenso in ogni momento, senza effetti sui trattamenti già fatti. Puoi presentare
+    reclamo al Garante per la protezione dei dati personali (<a href="https://www.garanteprivacy.it" rel="noopener">garanteprivacy.it</a>).
+  </p>
+
+  <h2>6. Obbligatorietà</h2>
+  <p>Nome, telefono e consenso all’informativa sono necessari per rispondere alla richiesta: senza, non possiamo ricontattarti. Gli altri campi sono facoltativi.</p>
+
+  <p>Per i cookie e le tecnologie simili leggi la <a href="/cookie/">cookie policy</a>.</p>
+</LegalPage>

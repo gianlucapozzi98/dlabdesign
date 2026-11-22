@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Pagina non trovata" description="La pagina che cerchi non esiste o è stata spostata." noindex>
+  <section class="nf wrap">
+    <svg class="drawing nf__draw" viewBox="0 0 600 300" role="img" aria-labelledby="nf-t" data-draw="enter">
+      <title id="nf-t">Disegno a linea: una porta aperta su una stanza vuota</title>
+      <path class="l2" d="M20 260H580"></path>
+      <path class="l1" d="M220 260V60H380V260"></path>
+      <path class="l1" d="M220 60L170 90V290L220 260"></path>
+      <path class="l3" d="M380 60L470 20M380 260L470 290M220 60L130 20"></path>
+      <path class="q" d="M220 280H380M220 272v16M380 272v16"></path>
+      <text class="qt" x="300" y="298" text-anchor="middle">vuoto</text>
+    </svg>
+    <p class="mono nf__code">Errore 404</p>
+    <h1 class="h1">Qui non c’è niente.</h1>
+    <p class="lead">La pagina non esiste o è stata spostata con il nuovo sito.</p>
+    <div class="btn-row">
+      <a class="btn" href="/">Torna alla home</a>
+      <a class="btn btn--ghost" href="/progetti/">Progetti</a>
+      <a class="btn btn--ghost" href="/contatti/">Contatti</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    min-height: 80svh;
+    padding-top: calc(var(--nav-h) + var(--s-8));
+    padding-bottom: var(--s-9);
+    display: grid;
+    gap: var(--s-5);
+    align-content: center;
+  }
+  .nf__draw {
+    width: min(520px, 100%);
+    color: var(--c-inchiostro);
+  }
+  .nf__code {
+    color: var(--c-quota-testo);
+  }
+</style>

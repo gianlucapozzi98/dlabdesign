@@ -1,0 +1,109 @@
+---
+import { getCollection } from 'astro:content';
+import ProjectCard from './ProjectCard.astro';
+import StudiList from './StudiList.astro';
+interface Props {
+  categoria?: 'casa' | 'negozio';
+  showStudi?: boolean;
+}
+const { categoria, showStudi = true } = Astro.props;
+const progetti = (await getCollection('progetti'))
+  .filter((p) => !categoria || p.data.categoria === categoria)
+  .sort((a, b) => a.data.ordine - b.data.ordine);
+const path = Astro.url.pathname;
+const tabs = [
+  { href: '/progetti/', label: 'Tutti' },
+  { href: '/progetti/casa/', label: 'Casa' },
+  { href: '/progetti/negozio/', label: 'Negozio' },
+  { href: '/progetti/studi/', label: 'Studi' },
+];
+---
+
+<div class="wrap pidx">
+  <nav class="pidx__tabs" aria-label="Categorie dei progetti">
+    <ul role="list">
+      {
+        tabs.map((t) => (
+          <li>
+            <a class="btn btn--ghost" href={t.href} aria-current={path === t.href ? 'page' : undefined}>
+              {t.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <section aria-labelledby="realizzati-title" class="pidx__sec">
+    <h2 class="mono pidx__h" id="realizzati-title">Realizzati · {progetti.length}</h2>
+    {
+      progetti.length ? (
+        <ol class="pidx__grid" role="list">
+          {progetti.map((p, i) => (
+            <li>
+              <ProjectCard p={p} index={i} sizes="(min-width: 1200px) 30vw, (min-width: 760px) 45vw, 92vw" eager={i < 2} />
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p class="lead">Nessun progetto pubblicato in questa categoria.</p>
+      )
+    }
+  </section>
+
+  {
+    showStudi && (
+      <section aria-labelledby="studi-title" class="pidx__sec pidx__studi">
+        <h2 class="mono pidx__h" id="studi-title">
+          Studi · idee e disegni non realizzati
+        </h2>
+        <StudiList />
+      </section>
+    )
+  }
+</div>
+
+<style>
+  .pidx {
+    padding-bottom: var(--s-section);
+  }
+  .pidx__tabs ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    list-style: none;
+    padding: 0;
+  }
+  .pidx__tabs a[aria-current='page'] {
+    --btn-bg: var(--c-inchiostro);
+    --btn-fg: var(--c-lucido);
+    --btn-bd: var(--c-inchiostro);
+  }
+  .pidx__sec {
+    margin-top: var(--s-8);
+  }
+  .pidx__h {
+    padding-bottom: var(--s-3);
+    border-bottom: 1px solid currentColor;
+    margin-bottom: var(--s-6);
+  }
+  .pidx__grid {
+    display: grid;
+    gap: var(--s-8) var(--gutter);
+    list-style: none;
+    padding: 0;
+  }
+  @media (min-width: 760px) {
+    .pidx__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1200px) {
+    .pidx__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .pidx__studi {
+    margin-top: var(--s-section);
+  }
+</style>

@@ -1,0 +1,85 @@
+---
+/**
+ * STUDIO 01 — Soglia. Disegno concettuale (assonometria + prospetto schematico).
+ * Non è un lavoro realizzato e non ha misure di progetto.
+ */
+import { faces, pathOf, iso, bbox, type Box } from '../lib/iso';
+interface Props {
+  id?: string;
+  draw?: 'enter' | 'scrub' | false;
+  withElevation?: boolean;
+}
+const { id = 'soglia', draw = 'enter', withElevation = true } = Astro.props;
+const boxes: (Box & { k: string })[] = [
+  { k: 'base', x: 0, y: 0, z: 0, w: 170, d: 64, h: 8 },
+  { k: 'seduta', x: 26, y: 0, z: 8, w: 118, d: 64, h: 38 },
+  { k: 'stipiteS', x: 0, y: 0, z: 8, w: 26, d: 64, h: 232 },
+  { k: 'stipiteD', x: 144, y: 0, z: 8, w: 26, d: 64, h: 232 },
+  { k: 'mensola', x: 26, y: 0, z: 168, w: 118, d: 30, h: 6 },
+  { k: 'architrave', x: 0, y: 0, z: 240, w: 170, d: 64, h: 26 },
+];
+const polys = boxes.map((b) => ({ k: b.k, ...Object.fromEntries(Object.entries(faces(b)).map(([n, f]) => [n, pathOf(f)])) }));
+const pts2 = boxes.flatMap((b) => Object.values(faces(b)).flat().map((p) => iso(p)));
+const bb = bbox(pts2, 24);
+// prospetto schematico a destra
+const ex = bb.x + bb.w + 40;
+const ey = bb.y + 20;
+const sc = 0.95;
+const R = (x: number, y: number, w: number, h: number) => `M${ex + x * sc} ${ey + y * sc}h${w * sc}v${h * sc}h${-w * sc}Z`;
+const elev = [R(0, 0, 170, 26), R(0, 26, 26, 232), R(144, 26, 26, 232), R(26, 92, 118, 6), R(26, 212, 118, 38), R(0, 250, 170, 8)];
+const vbW = withElevation ? bb.w + 40 + 170 * sc + 30 : bb.w;
+---
+
+<svg
+  class="drawing soglia"
+  viewBox={`${bb.x} ${bb.y} ${vbW} ${Math.max(bb.h, 290)}`}
+  role="img"
+  aria-labelledby={`${id}-t`}
+  data-draw={draw || undefined}
+>
+  <title id={`${id}-t`}>Studio concettuale, non realizzato: un portale d'ingresso con seduta e mensola, in assonometria e in prospetto.</title>
+  <g class="axo">
+    {
+      polys.map((p) => (
+        <g>
+          <path class="l1 f-right" d={(p as any).right} />
+          <path class="l1 f-front" d={(p as any).front} />
+          <path class="l1 f-top" d={(p as any).top} />
+        </g>
+      ))
+    }
+  </g>
+  {
+    withElevation && (
+      <g class="elev">
+        {elev.map((d) => (
+          <path class="l2" d={d} />
+        ))}
+        <path class="q" d={`M${ex} ${ey + 268 * sc}H${ex + 170 * sc}M${ex} ${ey + 262 * sc}v12M${ex + 170 * sc} ${ey + 262 * sc}v12`} />
+        <text class="qt" x={ex + 85 * sc} y={ey + 284 * sc} text-anchor="middle">
+          passaggio
+        </text>
+        <text class="tx" x={ex} y={ey - 8}>
+          Prospetto · schema
+        </text>
+      </g>
+    )
+  }
+</svg>
+
+<style>
+  .soglia {
+    width: 100%;
+    height: auto;
+    color: var(--c-inchiostro);
+  }
+  .f-top {
+    fill: #f6f5f1;
+  }
+  .f-front {
+    fill: #e8e7e1;
+  }
+  .f-right {
+    fill: #d9d8d1;
+  }
+</style>

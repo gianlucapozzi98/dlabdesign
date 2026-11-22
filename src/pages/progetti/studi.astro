@@ -1,0 +1,31 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import StudiList from '../../components/StudiList.astro';
+import Closing from '../../components/Closing.astro';
+---
+
+<Base title="Studi: idee e disegni non realizzati" description="Studi di D-Labdesign: disegni concettuali su volumi e materiali. Non sono lavori realizzati.">
+  <PageHeader
+    title="Studi"
+    lead="Idee e disegni non realizzati. Servono a mostrare come ragioniamo su volumi, funzioni e materiali: nessuno di questi è un lavoro consegnato a un cliente."
+    crumbs={[{ href: '/progetti/', label: 'Progetti' }, { label: 'Studi' }]}
+    tavola="P.03"
+    nota="Non realizzati"
+  >
+    <p class="tag tag--box tag--quota studi-flag">Studio concettuale, non realizzato</p>
+  </PageHeader>
+  <div class="wrap studi-page">
+    <StudiList headingLevel="h2" />
+  </div>
+  <Closing />
+</Base>
+
+<style>
+  .studi-flag {
+    margin-top: var(--s-5);
+  }
+  .studi-page {
+    padding-bottom: var(--s-section);
+  }
+</style>

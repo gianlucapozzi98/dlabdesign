@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ProjectsIndex from '../../components/ProjectsIndex.astro';
+import Closing from '../../components/Closing.astro';
+---
+
+<Base title="Progetti" description="Progetti realizzati da D-Labdesign a Treviglio: casa e negozio, con le foto vere dei lavori. In una sezione a parte, gli studi non realizzati.">
+  <PageHeader
+    title="Progetti"
+    lead="Lavori veri, con le foto dei cantieri e degli spazi finiti. Gli studi, idee e disegni non realizzati, stanno in una sezione a parte."
+    crumbs={[{ label: 'Progetti' }]}
+    tavola="P.00"
+    nota="Indice"
+  />
+  <ProjectsIndex />
+  <Closing />
+</Base>

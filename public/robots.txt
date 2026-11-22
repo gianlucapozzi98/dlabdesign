@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /keystatic/
+Disallow: /api/
+
+Sitemap: https://www.d-labdesign.it/sitemap-index.xml

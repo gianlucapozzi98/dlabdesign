@@ -1,0 +1,265 @@
+---
+import Base from '../layouts/Base.astro';
+import Tour from '../components/Tour.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Esploso from '../components/Esploso.astro';
+import ProjectStrip from '../components/ProjectStrip.astro';
+import ContactSheet from '../components/ContactSheet.astro';
+import Lightbox from '../components/Lightbox.astro';
+import ConsentVideo from '../components/ConsentVideo.astro';
+import NewsList from '../components/NewsList.astro';
+import Visit from '../components/Visit.astro';
+import Closing from '../components/Closing.astro';
+import { Image } from 'astro:assets';
+import { SITE, CTA } from '../data/site';
+import { OPENING } from '../data/opening';
+import poster from '../assets/opening/mg_3562.jpg';
+import labFoto from '../assets/opening/mg_9895.jpg';
+
+const statement = SITE.descrizione;
+const words = statement.split(' ');
+---
+
+<Base
+  title="D-Labdesign | Studio e showroom di design a Treviglio"
+  description="Showroom e studio di design d’interni a Treviglio, nel complesso Alcentro. Martedì e mercoledì su appuntamento: prenota allo 0363 57152."
+  loader
+>
+  <Tour />
+
+  <!-- 05 · IL LAB -->
+  <section class="section lab" id="il-lab" aria-labelledby="lab-title">
+    <div class="wrap">
+      <SectionHead tav="05" title="Il Lab" id="lab-title" nota="D-Labdesign by Arredamenti Salini" size="h3" />
+      <p class="lab__statement" data-ink>
+        {words.map((w) => <span class="ink-w">{w} </span>)}
+      </p>
+      <div class="lab__grid">
+        <div class="lab__text stack">
+          <p class="lead">
+            Un oggetto deve essere bello, ma anche sorprendere e far pensare: per questo uniamo materiali diversi e usiamo volumi e funzioni in modo
+            inatteso.
+          </p>
+          <p class="lab__close">{SITE.chiusura}</p>
+          <div class="btn-row">
+            <a class="btn btn--ghost" href="/il-lab/">Il Lab</a>
+            <a class="btn" href={CTA.href}>{CTA.label}</a>
+          </div>
+        </div>
+        <figure class="lab__fig" data-reveal>
+          <div class="ph">
+            <Image src={labFoto} alt="La zona cucina dello showroom vista dall’alto durante l’inaugurazione, con l’isola bianca e gli ospiti." widths={[480, 800, 1000]} sizes="(min-width: 960px) 40vw, 100vw" loading="lazy" format="avif" quality={68} />
+          </div>
+          <figcaption class="caption mono"><span>Lo showroom, 2012</span><span>{OPENING.credito}</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · VOLUMI E MATERIALI -->
+  <section class="vm" id="volumi-e-materiali" aria-labelledby="vm-title" data-esploso-scroll data-start="top top" data-end="bottom bottom">
+    <div class="vm__inner wrap">
+      <div class="vm__text">
+        <SectionHead tav="06" title="Volumi e materiali" id="vm-title" nota="Esploso" />
+        <p class="lead">Dove i volumi incontrano i materiali, un pezzo si apre e mostra i suoi strati.</p>
+        <ol class="vm__legend" role="list">
+          <li><span class="mono">1</span> Vetro <a class="link" href="/progetti/negozio-tabaccheria/">Negozio | Tabaccheria</a></li>
+          <li><span class="mono">2</span> Legno <a class="link" href="/progetti/negozio-abbigliamento/">Negozio | Abbigliamento</a></li>
+          <li><span class="mono">3</span> Metallo <a class="link" href="/progetti/negozio-abbigliamento/">Negozio | Abbigliamento</a></li>
+          <li><span class="mono">4</span> Pannello con effetto materico <a class="link" href="/progetti/negozio-tabaccheria/">Negozio | Tabaccheria</a></li>
+          <li><span class="mono">5</span> Laccato <a class="link" href="/progetti/negozio-tabaccheria/">Negozio | Tabaccheria</a></li>
+        </ol>
+        <p class="vm__note">
+          <span class="tag tag--box tag--quota">Schema illustrativo</span>
+          Il banco non è un prodotto né un lavoro realizzato: serve a mostrare come ragioniamo. I materiali sono quelli citati nei nostri progetti di negozio.
+        </p>
+      </div>
+      <div class="vm__draw">
+        <Esploso />
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · PROGETTI -->
+  <ProjectStrip />
+
+  <!-- 08 · THE OPENING -->
+  <section class="section on-dark opening" id="the-opening" aria-labelledby="opening-title">
+    <div class="wrap">
+      <SectionHead tav="08" title="The Opening" id="opening-title" nota={OPENING.dataTesto} />
+      <div class="opening__intro">
+        <p class="lead">
+          L’inaugurazione dello Space Concept D-Labdesign. Il provino della serata: le foto cerchiate in rosso sono quelle del nostro tour.
+        </p>
+        <a class="btn btn--light" href="/the-opening/">Tutte le foto</a>
+      </div>
+      <ContactSheet limit={8} />
+    </div>
+  </section>
+
+  <!-- 09 · VIDEO -->
+  <section class="section video" id="video" aria-labelledby="video-title">
+    <div class="wrap video__grid">
+      <SectionHead tav="09" title="Video" id="video-title" nota="Inaugurazione" />
+      <ConsentVideo youtubeId="s1OqLSYq2kc" title="Il video dell’inaugurazione: dai preparativi alla serata" poster={poster} posterAlt="L’interno dello showroom la sera dell’inaugurazione." />
+    </div>
+  </section>
+
+  <!-- 10 · NEWS -->
+  <section class="section news-sec" id="news" aria-labelledby="news-title">
+    <div class="wrap">
+      <SectionHead tav="10" title="News" id="news-title" nota="Ultime notizie" />
+      <div class="news-sec__list">
+        <NewsList limit={3} />
+        <a class="btn btn--ghost" href="/news/">Tutte le news</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · VIENI A TROVARCI -->
+  <Visit />
+
+  <Closing />
+  <Lightbox />
+</Base>
+
+<style>
+  .lab__statement {
+    margin-top: var(--s-7);
+    font-size: clamp(1.9rem, 1rem + 3.6vw, 5rem);
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+    font-weight: 340;
+    max-width: 24ch;
+    text-wrap: balance;
+  }
+  .lab__grid {
+    display: grid;
+    gap: var(--s-8) var(--gutter);
+    margin-top: var(--s-8);
+  }
+  @media (min-width: 960px) {
+    .lab__grid {
+      grid-template-columns: 5fr 1fr 6fr;
+    }
+    .lab__fig {
+      grid-column: 3;
+    }
+    .lab__text {
+      align-self: end;
+    }
+  }
+  .lab__text {
+    --flow: var(--s-5);
+    max-width: 46ch;
+  }
+  .lab__close {
+    font-size: var(--t-h3);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .lab__fig .ph {
+    aspect-ratio: 3 / 2;
+  }
+
+  .vm {
+    position: relative;
+    padding-block: var(--s-section);
+    background: var(--c-lucido-2);
+    background-image: linear-gradient(color-mix(in srgb, var(--c-filo) 55%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--c-filo) 55%, transparent) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .vm__inner {
+    display: grid;
+    gap: var(--s-7) var(--gutter);
+  }
+  .vm__text {
+    display: grid;
+    gap: var(--s-5);
+    align-content: start;
+  }
+  .vm__legend {
+    display: grid;
+    gap: var(--s-2);
+    list-style: none;
+    padding: 0;
+  }
+  .vm__legend li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em 0.8em;
+    align-items: baseline;
+    padding-block: var(--s-2);
+    border-bottom: 1px solid var(--c-filo);
+  }
+  .vm__legend .mono {
+    display: inline-grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border: 1px solid var(--c-inchiostro);
+    border-radius: 50%;
+    font-size: 0.75rem;
+  }
+  .vm__legend .link {
+    margin-left: auto;
+    font-size: var(--t-small);
+    color: var(--c-grafite);
+  }
+  .vm__note {
+    font-size: var(--t-small);
+    color: var(--c-grafite);
+    display: grid;
+    gap: var(--s-2);
+    justify-items: start;
+    max-width: 46ch;
+  }
+  @media (min-width: 960px) {
+    .vm__inner {
+      grid-template-columns: 4fr 7fr;
+      align-items: center;
+    }
+  }
+  /* fissata solo se testo e disegno stanno davvero nello schermo */
+  @media (min-width: 960px) and (min-height: 820px) {
+    :global(.motion) .vm {
+      height: 260svh;
+      padding: 0;
+    }
+    :global(.motion) .vm__inner {
+      position: sticky;
+      top: var(--nav-h);
+      height: calc(100svh - var(--nav-h));
+      align-items: center;
+    }
+    .vm__draw {
+      max-height: calc(100svh - var(--nav-h) - 3rem);
+      display: grid;
+    }
+    .vm__draw :global(svg) {
+      max-height: calc(100svh - var(--nav-h) - 6rem);
+    }
+  }
+
+  .opening__intro {
+    display: grid;
+    gap: var(--s-5);
+    justify-items: start;
+    margin-block: var(--s-6) var(--s-8);
+    max-width: 52ch;
+  }
+  .video__grid {
+    display: grid;
+    gap: var(--s-7);
+  }
+  .news-sec__list {
+    margin-top: var(--s-7);
+    display: grid;
+    gap: var(--s-6);
+    justify-items: start;
+  }
+  .news-sec__list :global(.news) {
+    width: 100%;
+  }
+</style>

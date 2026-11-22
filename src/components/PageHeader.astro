@@ -1,0 +1,89 @@
+---
+/** Intestazione delle pagine interne: briciole, titolo, sottotitolo e cartiglio. */
+import Cartiglio from './Cartiglio.astro';
+interface Crumb {
+  href?: string;
+  label: string;
+}
+interface Props {
+  title: string;
+  lead?: string;
+  crumbs?: Crumb[];
+  tavola?: string;
+  nota?: string;
+  cartiglioTitolo?: string;
+}
+const { title, lead, crumbs = [], tavola, nota = 'Schema', cartiglioTitolo } = Astro.props;
+---
+
+<header class="phead wrap">
+  {
+    crumbs.length > 0 && (
+      <nav class="phead__crumbs mono" aria-label="Percorso">
+        <ol role="list">
+          <li>
+            <a class="draw-link" href="/">Home</a>
+          </li>
+          {crumbs.map((c) => (
+            <li>{c.href ? <a class="draw-link" href={c.href}>{c.label}</a> : <span aria-current="page">{c.label}</span>}</li>
+          ))}
+        </ol>
+      </nav>
+    )
+  }
+  <div class="phead__row">
+    <div class="phead__main">
+      <h1 class="h1 phead__title">{title}</h1>
+      {lead && <p class="lead phead__lead">{lead}</p>}
+      <slot />
+    </div>
+    {tavola && <Cartiglio class="phead__cart" tavola={tavola} titolo={cartiglioTitolo ?? title} nota={nota} />}
+  </div>
+  <svg class="drawing phead__line" viewBox="0 0 1200 20" preserveAspectRatio="none" aria-hidden="true" data-draw="enter">
+    <path class="l2" d="M0 10H1200"></path>
+    <path class="q" d="M0 3V17"></path>
+  </svg>
+</header>
+
+<style>
+  .phead {
+    padding-top: calc(var(--nav-h) + clamp(2.5rem, 2rem + 4vw, 6rem));
+    padding-bottom: var(--s-6);
+  }
+  .phead__crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    list-style: none;
+    padding: 0;
+    color: var(--c-grafite);
+  }
+  .phead__crumbs li + li::before {
+    content: '/';
+    margin-right: var(--s-2);
+    opacity: 0.5;
+  }
+  .phead__row {
+    display: grid;
+    gap: var(--s-6);
+    margin-top: var(--s-6);
+    align-items: end;
+  }
+  @media (min-width: 960px) {
+    .phead__row {
+      grid-template-columns: 1fr auto;
+    }
+  }
+  .phead__title {
+    max-width: 16ch;
+  }
+  .phead__lead {
+    margin-top: var(--s-5);
+    max-width: 46ch;
+  }
+  .phead__line {
+    width: 100%;
+    height: 20px;
+    margin-top: var(--s-7);
+  }
+</style>

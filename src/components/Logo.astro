@@ -1,0 +1,66 @@
+---
+/**
+ * Marchio D-Labdesign — RICOSTRUZIONE VETTORIALE PROVVISORIA dal logo raster (160×80) del sito attuale.
+ * Da sostituire con il file vettoriale ufficiale fornito dal cliente.
+ * Il taglio a "S" è una maschera: funziona su qualsiasi fondo (currentColor).
+ */
+interface Props {
+  mark?: boolean; // solo la "D"
+  class?: string;
+  title?: string;
+}
+const { mark = false, class: cls, title } = Astro.props;
+const id = `dlm-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<span class:list={['logo', cls, { 'logo--mark': mark }]}>
+  <svg class="logo__d" viewBox="168 0 330 470" role={title ? 'img' : undefined} aria-hidden={title ? undefined : 'true'} focusable="false">
+    {title && <title>{title}</title>}
+    <defs>
+      <mask id={id} maskUnits="userSpaceOnUse" x="160" y="0" width="340" height="470">
+        <rect x="160" y="0" width="340" height="470" fill="#fff"></rect>
+        <path
+          d="M324 70C300 104 281 160 302 213C322 263 353 302 336 351C328 373 314 389 299 400"
+          fill="none"
+          stroke="#000"
+          stroke-width="7"
+          stroke-linecap="round"></path>
+      </mask>
+    </defs>
+    <path d="M175 8H300A190 227 0 0 1 300 462H175Z" fill="currentColor" mask={`url(#${id})`}></path>
+  </svg>
+  {
+    !mark && (
+      <span class="logo__w" aria-hidden="true">
+        <span>Lab</span>
+        <span>Design</span>
+      </span>
+    )
+  }
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.42em;
+    color: var(--c-marchio);
+    line-height: 1;
+  }
+  .logo__d {
+    height: 2.15em;
+    width: auto;
+  }
+  .logo__w {
+    display: grid;
+    font-weight: 800;
+    font-size: 0.74em;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 0.95;
+  }
+  :global(.on-dark) .logo,
+  :global(.on-photo) .logo {
+    color: var(--c-lucido);
+  }
+</style>

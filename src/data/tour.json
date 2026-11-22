@@ -1,0 +1,165 @@
+{
+  "provvisorio": true,
+  "notaProvvisoria": "Foto provvisorie: inaugurazione 2012 (Melting Studio, Treviglio). Saranno sostituite dalle foto del tour.",
+  "scenes": [
+    {
+      "id": "tour-01",
+      "tavola": "01",
+      "titolo": "Esterno",
+      "luogo": "Il cortile di Alcentro",
+      "alt": "Il cortile davanti allo showroom al tramonto: la facciata vetrata illuminata, il prato sintetico, ombrelloni bianchi e alcune persone.",
+      "focus": [
+        0.62,
+        0.48
+      ],
+      "trace": {
+        "exclude": [
+          [
+            0.4,
+            0.58,
+            0.22,
+            0.42
+          ],
+          [
+            0.7,
+            0.62,
+            0.3,
+            0.38
+          ],
+          [
+            0.33,
+            0.5,
+            0.25,
+            0.12
+          ],
+          [
+            0.05,
+            0.55,
+            0.25,
+            0.3
+          ]
+        ]
+      }
+    },
+    {
+      "id": "tour-02",
+      "tavola": "02",
+      "titolo": "Ingresso",
+      "luogo": "La facciata vetrata",
+      "alt": "La facciata vetrata dello showroom con la porta d'ingresso al centro; in primo piano un tavolo bianco con due candele e alcune riviste.",
+      "focus": [
+        0.407,
+        0.33
+      ],
+      "door": [
+        0.368,
+        0.22,
+        0.078,
+        0.225
+      ],
+      "trace": {
+        "exclude": [
+          [
+            0.08,
+            0.2,
+            0.1,
+            0.25
+          ]
+        ]
+      }
+    },
+    {
+      "id": "tour-03",
+      "tavola": "03",
+      "titolo": "Soglia",
+      "luogo": "Appena entrati",
+      "alt": "Appena dentro la porta vetrata: a destra una parete chiara con un listello di legno e una frase scritta a mano; fuori, gli ospiti nel cortile.",
+      "focus": [
+        0.75,
+        0.5
+      ],
+      "trace": {
+        "exclude": [
+          [
+            0.0,
+            0.25,
+            0.17,
+            0.75
+          ],
+          [
+            0.15,
+            0.58,
+            0.3,
+            0.42
+          ]
+        ]
+      }
+    },
+    {
+      "id": "tour-04",
+      "tavola": "04",
+      "titolo": "Interno",
+      "luogo": "Lo showroom",
+      "alt": "Interno dello showroom: in primo piano un tavolo in legno con un vaso di fiori gialli e rossi, sopra una lampada a sospensione dalla superficie accartocciata, sullo sfondo una parete di ciocchi di legna e alcune persone.",
+      "focus": [
+        0.55,
+        0.45
+      ],
+      "hotspots": [
+        {
+          "x": 0.64,
+          "y": 0.17,
+          "etichetta": "Sospensione",
+          "testo": "Una lampada dalla superficie accartocciata, sopra il tavolo."
+        },
+        {
+          "x": 0.6,
+          "y": 0.8,
+          "etichetta": "Piano",
+          "testo": "Il piano del tavolo in legno, con le venature in vista."
+        },
+        {
+          "x": 0.93,
+          "y": 0.42,
+          "etichetta": "Legna a vista",
+          "testo": "Una parete di ciocchi di legna accatastati."
+        }
+      ],
+      "trace": {
+        "exclude": [
+          [
+            0.03,
+            0.12,
+            0.42,
+            0.5
+          ],
+          [
+            0.55,
+            0.28,
+            0.18,
+            0.36
+          ],
+          [
+            0.78,
+            0.27,
+            0.14,
+            0.5
+          ],
+          [
+            0.0,
+            0.05,
+            0.12,
+            0.6
+          ],
+          [
+            0.22,
+            0.55,
+            0.25,
+            0.45
+          ]
+        ],
+        "minLen": 0.07
+      }
+    }
+  ]
+}

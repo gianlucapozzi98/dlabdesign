@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from './PageHeader.astro';
+interface Props {
+  title: string;
+  description: string;
+  aggiornato?: string;
+}
+const { title, description, aggiornato = '22 novembre 2026' } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <PageHeader title={title} crumbs={[{ label: title }]} />
+  <div class="wrap legal-page">
+    <p class="bozza" role="note">
+      BOZZA DA VALIDARE. Questo testo è una proposta preparata con il sito e non è stato ancora verificato da un consulente. I campi tra parentesi
+      quadre vanno completati dal titolare. Ultimo aggiornamento: {aggiornato}.
+    </p>
+    <div class="prose legal-prose">
+      <slot />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .legal-page {
+    padding-bottom: var(--s-section);
+    display: grid;
+    gap: var(--s-7);
+  }
+  .bozza {
+    max-width: 70ch;
+  }
+  .legal-prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--t-small);
+  }
+  .legal-prose :global(th),
+  .legal-prose :global(td) {
+    text-align: left;
+    padding: 0.6em 0.5em;
+    border-bottom: 1px solid var(--c-filo);
+    vertical-align: top;
+  }
+  .legal-prose :global(.table-wrap) {
+    overflow-x: auto;
+  }
+</style>

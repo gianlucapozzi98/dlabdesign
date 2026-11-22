@@ -1,0 +1,14 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import NewsList from '../../components/NewsList.astro';
+import Closing from '../../components/Closing.astro';
+---
+
+<Base title="News" description="Notizie da D-Labdesign, showroom e studio di design a Treviglio: eventi, aperture e novità.">
+  <PageHeader title="News" lead="Eventi, aperture e novità dallo showroom." crumbs={[{ label: 'News' }]} tavola="N.01" nota="Archivio" />
+  <section class="wrap section" aria-label="Elenco delle news" style="padding-top: var(--s-5)">
+    <NewsList headingLevel="h2" />
+  </section>
+  <Closing />
+</Base>

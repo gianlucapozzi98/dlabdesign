@@ -1,0 +1,200 @@
+---
+import Logo from './Logo.astro';
+import Hours from './Hours.astro';
+import { SITE, NAV, CTA, indirizzoBreve } from '../data/site';
+const s = SITE.societa;
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer on-dark" aria-labelledby="footer-title">
+  <h2 id="footer-title" class="sr-only">Informazioni su D-Labdesign</h2>
+
+  <div class="wrap">
+    <!-- Linea di sezione A–A': si traccia all'ingresso -->
+    <svg class="drawing section-line" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true" focusable="false" data-draw="enter">
+      <path class="l1" d="M30 30H1170"></path>
+      <path class="q" d="M30 12V48M1170 12V48"></path>
+      <path class="l1" d="M30 30L42 18M30 30L42 42"></path>
+      <path class="l1" d="M1170 30L1158 18M1170 30L1158 42"></path>
+    </svg>
+    <div class="section-labels mono" aria-hidden="true"><span>A</span><span>Sezione · schema</span><span>A'</span></div>
+
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <Logo />
+        <p class="lead">Dove volumi e materiali si incontrano.</p>
+        <a class="btn btn--light" href={CTA.href}>{CTA.label}</a>
+      </div>
+
+      <div class="foot-col">
+        <h3 class="mono muted">Showroom</h3>
+        <address>
+          {SITE.showroom.via}<br />
+          {SITE.showroom.cap} {SITE.showroom.citta} ({SITE.showroom.provincia})<br />
+          Complesso {SITE.showroom.complesso}
+        </address>
+        <p class="small muted">{SITE.showroom.parcheggio}</p>
+      </div>
+
+      <div class="foot-col">
+        <h3 class="mono muted">Contatti</h3>
+        <ul role="list" class="links">
+          <li>Appuntamenti <a class="link" href={SITE.appuntamenti.href}>{SITE.appuntamenti.testo}</a></li>
+          <li>Showroom <a class="link" href={SITE.telefono.href}>{SITE.telefono.testo}</a></li>
+          <li><a class="link" href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+          <li><a class="link" href={SITE.social.facebook} rel="noopener" target="_blank">Facebook<span class="sr-only"> (si apre in una nuova scheda)</span></a></li>
+        </ul>
+      </div>
+
+      <div class="foot-col foot-hours">
+        <h3 class="mono muted">Orari</h3>
+        <Hours compact />
+      </div>
+
+      <nav class="foot-col" aria-label="Pagine">
+        <h3 class="mono muted">Pagine</h3>
+        <ul role="list" class="links">
+          {NAV.map((l) => <li><a class="draw-link" href={l.href}>{l.label}</a></li>)}
+        </ul>
+      </nav>
+    </div>
+
+    <div class="legal">
+      <p class="company">
+        <span>{s.ragioneSociale}</span>
+        <span>P.IVA e C.F. {s.piva}</span>
+        <span>Sede legale {s.sedeLegale}</span>
+        <span>Showroom {indirizzoBreve}</span>
+        <span>REA {s.rea ?? <span class="placeholder">da inserire</span>}</span>
+        <span>Capitale sociale {s.capitaleSociale ?? <span class="placeholder">da inserire</span>}</span>
+        <span>PEC {s.pec ?? <span class="placeholder">da inserire</span>}</span>
+      </p>
+      <ul role="list" class="legal-links">
+        <li><a class="draw-link" href="/privacy/">Privacy</a></li>
+        <li><a class="draw-link" href="/cookie/">Cookie</a></li>
+        <li><a class="draw-link" href="/termini/">Note legali</a></li>
+        <li><a class="draw-link" href="/accessibilita/">Accessibilità</a></li>
+        <li><button type="button" class="draw-link" data-cookie-open>Preferenze cookie</button></li>
+      </ul>
+      <p class="small muted">© {year} D-Labdesign by Arredamenti Salini. Testi legali in bozza, da validare.</p>
+    </div>
+  </div>
+
+  <p class="wordmark" aria-hidden="true">D-Labdesign</p>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    padding-top: var(--s-9);
+    overflow: hidden;
+  }
+  .section-line {
+    width: 100%;
+    height: 40px;
+    color: var(--c-grafite-chiaro);
+  }
+  .section-labels {
+    display: flex;
+    justify-content: space-between;
+    color: var(--c-grafite-chiaro);
+    margin-top: var(--s-2);
+  }
+  .foot-grid {
+    display: grid;
+    gap: var(--s-7) var(--gutter);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: var(--s-8);
+  }
+  .foot-brand {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: var(--s-5);
+    justify-items: start;
+    font-size: 18px;
+  }
+  .foot-brand .lead {
+    font-size: var(--t-h3);
+    max-width: 18ch;
+    letter-spacing: -0.02em;
+  }
+  .foot-col {
+    display: grid;
+    align-content: start;
+    gap: var(--s-3);
+  }
+  .foot-col h3 {
+    margin-bottom: var(--s-2);
+    font-size: var(--t-mono);
+    letter-spacing: var(--track-mono);
+  }
+  .foot-hours {
+    grid-column: 1 / -1;
+  }
+  address {
+    font-style: normal;
+  }
+  .links {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--s-2);
+  }
+  .small {
+    font-size: var(--t-small);
+  }
+  @media (min-width: 760px) {
+    .foot-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .foot-hours {
+      grid-column: auto;
+    }
+  }
+  @media (min-width: 1200px) {
+    .foot-grid {
+      grid-template-columns: 1.4fr repeat(4, minmax(0, 1fr));
+    }
+    .foot-brand {
+      grid-column: auto;
+    }
+  }
+  .legal {
+    margin-top: var(--s-9);
+    padding-top: var(--s-5);
+    border-top: 1px solid color-mix(in srgb, var(--c-lucido) 18%, transparent);
+    display: grid;
+    gap: var(--s-4);
+  }
+  .company {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25em 1.25em;
+    font-size: var(--t-small);
+    color: var(--c-grafite-chiaro);
+  }
+  .legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-5);
+    list-style: none;
+    padding: 0;
+  }
+  .legal-links button {
+    font-size: inherit;
+    color: inherit;
+  }
+  .wordmark {
+    margin-top: var(--s-7);
+    font-size: clamp(4rem, 17.5vw, 22rem);
+    line-height: 0.78;
+    letter-spacing: -0.06em;
+    font-weight: 300;
+    white-space: nowrap;
+    color: transparent;
+    -webkit-text-stroke: 1px color-mix(in srgb, var(--c-lucido) 32%, transparent);
+    text-align: center;
+    transform: translateY(12%);
+    user-select: none;
+  }
+</style>

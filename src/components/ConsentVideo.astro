@@ -1,0 +1,105 @@
+---
+/** Video YouTube caricato SOLO dopo il consenso "Video" (youtube-nocookie, nessuno script prima del clic). */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props {
+  youtubeId: string;
+  title: string;
+  poster: ImageMetadata;
+  posterAlt: string;
+}
+const { youtubeId, title, poster, posterAlt } = Astro.props;
+---
+
+<figure class="cvideo" data-cvideo={youtubeId} data-title={title}>
+  <div class="cvideo__frame">
+    <Image src={poster} alt={posterAlt} widths={[640, 1000]} sizes="(min-width: 960px) 60vw, 100vw" loading="lazy" format="avif" quality={65} />
+    <div class="cvideo__over on-dark">
+      <p class="mono cvideo__k">Video · YouTube</p>
+      <p class="cvideo__t">{title}</p>
+      <p class="cvideo__note" data-cvideo-note>
+        Il video è ospitato su YouTube, che può usare cookie e raccogliere dati di navigazione. Si carica solo se lo chiedi.
+      </p>
+      <div class="btn-row">
+        <button type="button" class="btn btn--light" data-cvideo-play>
+          <span data-cvideo-label>Accetta i video e riproduci</span>
+        </button>
+        <a class="btn btn--ghost" href={`https://www.youtube.com/watch?v=${youtubeId}`} target="_blank" rel="noopener">
+          Guarda su YouTube<span class="sr-only"> (si apre in una nuova scheda)</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</figure>
+
+<script>
+  import { consensoAttuale, accettaCategoria } from '../scripts/consent';
+  document.querySelectorAll<HTMLElement>('[data-cvideo]').forEach((fig) => {
+    const btn = fig.querySelector<HTMLButtonElement>('[data-cvideo-play]')!;
+    const label = fig.querySelector<HTMLElement>('[data-cvideo-label]')!;
+    const sync = () => {
+      if (consensoAttuale()?.video) label.textContent = 'Riproduci il video';
+    };
+    sync();
+    window.addEventListener('dl:consenso', sync);
+    btn.addEventListener('click', () => {
+      if (!consensoAttuale()?.video) accettaCategoria('video');
+      const id = fig.dataset.cvideo!;
+      const frame = fig.querySelector('.cvideo__frame')!;
+      const ifr = document.createElement('iframe');
+      ifr.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+      ifr.title = fig.dataset.title || 'Video';
+      ifr.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      ifr.allowFullscreen = true;
+      ifr.loading = 'lazy';
+      frame.replaceChildren(ifr);
+      ifr.focus();
+    });
+  });
+</script>
+
+<style>
+  .cvideo__frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--c-carta-scura);
+  }
+  .cvideo__frame :global(img),
+  .cvideo__frame :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 0;
+  }
+  .cvideo__frame :global(img) {
+    filter: brightness(0.55) saturate(0.85);
+  }
+  .cvideo__over {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: end;
+    gap: var(--s-3);
+    padding: clamp(16px, 4vw, 48px);
+    background: linear-gradient(180deg, transparent 20%, rgb(14 15 18 / 0.75));
+  }
+  .cvideo__t {
+    font-size: var(--t-h3);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    max-width: 22ch;
+  }
+  .cvideo__note {
+    font-size: var(--t-small);
+    max-width: 52ch;
+    color: var(--c-grafite-chiaro);
+  }
+  @media (max-width: 560px) {
+    .cvideo__frame {
+      aspect-ratio: 4 / 5;
+    }
+  }
+</style>

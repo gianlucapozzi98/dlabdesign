@@ -1,0 +1,31 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+import { SITE } from '../data/site';
+---
+
+<LegalPage title="Accessibilità" description="Dichiarazione di accessibilità del sito D-Labdesign: obiettivo WCAG 2.2 livello AA e come segnalare problemi.">
+  <p>Vogliamo che questo sito sia usabile da tutti. L’obiettivo è il livello AA delle Web Content Accessibility Guidelines (WCAG) 2.2.</p>
+
+  <h2>Cosa abbiamo fatto</h2>
+  <ul>
+    <li>Il sito si usa tutto da tastiera: il tour d’ingresso ha pulsanti per le tappe e un comando «Salta il tour».</li>
+    <li>Se nel sistema è attiva l’opzione «riduci movimento», animazioni, scorrimento morbido e tour animato si spengono: le foto compaiono in sequenza con le descrizioni.</li>
+    <li>Le foto hanno testi alternativi che descrivono cosa si vede; i disegni decorativi sono nascosti ai lettori di schermo, quelli informativi hanno titolo e descrizione.</li>
+    <li>Testi e controlli hanno contrasti verificati per il livello AA; il focus della tastiera è sempre visibile.</li>
+    <li>I moduli hanno etichette, messaggi d’errore chiari e un riepilogo degli errori.</li>
+    <li>Il layout funziona da 360 pixel di larghezza e con lo zoom del testo.</li>
+  </ul>
+
+  <h2>Limiti noti</h2>
+  <ul>
+    <li>Le foto del tour sono provvisorie e a bassa risoluzione, in attesa degli originali.</li>
+    <li>Video (YouTube) e mappa (OpenStreetMap) sono servizi esterni: la loro accessibilità dipende dai fornitori. Indirizzo e indicazioni sono comunque in testo nella pagina.</li>
+    <li>Il pannello per aggiornare news e progetti è riservato al personale e non fa parte del sito pubblico.</li>
+  </ul>
+
+  <h2>Segnalazioni</h2>
+  <p>
+    Se trovi un problema, scrivi a <a href={`mailto:${SITE.email}`}>{SITE.email}</a> o chiama lo {SITE.telefono.testo}: rispondiamo e, se possibile,
+    correggiamo. Data della verifica: 22 novembre 2026 (controlli automatici e prove a tastiera; verifica con utenti <span class="placeholder">[da fare]</span>).
+  </p>
+</LegalPage>

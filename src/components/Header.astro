@@ -1,0 +1,209 @@
+---
+import Logo from './Logo.astro';
+import { NAV, CTA, SITE } from '../data/site';
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+
+<header class="site-header" data-header>
+  <div class="bar wrap">
+    <a class="brand" href="/" aria-label="D-Labdesign, vai alla home">
+      <Logo />
+    </a>
+    <nav class="nav" aria-label="Principale">
+      <ul role="list">
+        {
+          NAV.map((l) => (
+            <li>
+              <a class="draw-link" href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined} data-astro-prefetch>
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <a class="btn nav-cta" href={CTA.href}>
+      <span class="only-desktop">{CTA.label}</span>
+      <span class="only-mobile">Prenota<span class="sr-only"> un appuntamento</span></span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>
+      <span class="menu-btn__icon" aria-hidden="true"><span></span><span></span></span>
+      <span class="mono menu-btn__txt">Menu</span>
+    </button>
+  </div>
+</header>
+
+<!-- Il menu sta FUORI dall'header: il backdrop-filter dell'header crea un contenitore
+     per gli elementi fixed, e dentro il pannello risulterebbe alto 0 px (invisibile e non cliccabile). -->
+<div class="menu" id="menu" data-menu hidden>
+  <div class="menu__inner wrap">
+    <nav aria-label="Menu">
+      <ol class="menu__list" role="list">
+        <li><a href="/" aria-current={path === '/' ? 'page' : undefined}><span class="mono">00</span>Home</a></li>
+        {
+          NAV.map((l, i) => (
+            <li>
+              <a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>
+                <span class="mono">{String(i + 1).padStart(2, '0')}</span>
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+    <div class="menu__foot">
+      <a class="btn" href={CTA.href}>{CTA.label}</a>
+      <p class="mono muted">Appuntamenti <a class="link" href={SITE.appuntamenti.href}>{SITE.appuntamenti.testo}</a></p>
+      <p class="mono muted">Showroom <a class="link" href={SITE.telefono.href}>{SITE.telefono.testo}</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { initHeader } from '../scripts/header';
+  initHeader();
+</script>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    height: var(--nav-h);
+    background: color-mix(in srgb, var(--c-lucido) 94%, transparent);
+    backdrop-filter: saturate(1.1) blur(8px);
+    -webkit-backdrop-filter: saturate(1.1) blur(8px);
+    border-bottom: 1px solid color-mix(in srgb, var(--c-inchiostro) 14%, transparent);
+    transition: transform var(--d-3) var(--ease);
+  }
+  .site-header.is-hidden {
+    transform: translateY(-100%);
+  }
+  .site-header.is-menu {
+    transform: none;
+  }
+  .bar {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--s-5);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 15px;
+    margin-right: auto;
+    padding: 6px 0;
+  }
+  .nav {
+    display: none;
+  }
+  .nav ul {
+    display: flex;
+    gap: clamp(1rem, 2vw, 2.25rem);
+    list-style: none;
+    padding: 0;
+  }
+  .nav a {
+    font-size: 1rem;
+    letter-spacing: -0.005em;
+  }
+  .nav-cta {
+    min-height: 40px;
+    padding-block: 0.5em;
+  }
+  .menu-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0 var(--s-2);
+  }
+  .menu-btn__icon {
+    display: grid;
+    gap: 5px;
+    width: 22px;
+  }
+  .menu-btn__icon span {
+    height: 1.5px;
+    background: currentColor;
+    transition: transform var(--d-2) var(--ease);
+  }
+  .menu-btn[aria-expanded='true'] .menu-btn__icon span:first-child {
+    transform: translateY(3.25px) rotate(45deg);
+  }
+  .menu-btn[aria-expanded='true'] .menu-btn__icon span:last-child {
+    transform: translateY(-3.25px) rotate(-45deg);
+  }
+  @media (min-width: 1080px) {
+    .nav {
+      display: block;
+    }
+    .menu-btn {
+      display: none;
+    }
+  }
+  @media (max-width: 420px) {
+    .menu-btn__txt {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+    .bar {
+      gap: var(--s-3);
+    }
+  }
+
+  .menu {
+    position: fixed;
+    inset: var(--nav-h) 0 0 0;
+    z-index: 49;
+    background: var(--c-lucido);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .menu__inner {
+    min-height: 100%;
+    display: grid;
+    align-content: space-between;
+    gap: var(--s-7);
+    padding-block: var(--s-6) var(--s-7);
+  }
+  .menu__list {
+    list-style: none;
+    padding: 0;
+    border-top: 1px solid var(--c-filo);
+  }
+  .menu__list a {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-4);
+    padding-block: var(--s-3);
+    border-bottom: 1px solid var(--c-filo);
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+    text-decoration: none;
+    transition: padding-left var(--d-2) var(--ease), color var(--d-2) var(--ease);
+  }
+  .menu__list a .mono {
+    color: var(--c-quota-testo);
+    min-width: 2.5ch;
+  }
+  .menu__list a:hover,
+  .menu__list a[aria-current='page'] {
+    padding-left: var(--s-3);
+  }
+  .menu__foot {
+    display: grid;
+    gap: var(--s-3);
+    justify-items: start;
+  }
+</style>

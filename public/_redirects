@@ -1,0 +1,25 @@
+# Netlify / Cloudflare Pages — 301 dai vecchi URL
+/it                                                   /                                              301
+/it/                                                  /                                              301
+/d-labdesign-chi-siamo                                /il-lab/                                       301
+/progetti/casa/casa-%7C-01                            /progetti/casa-01/                             301
+/progetti/casa/casa-|-01                              /progetti/casa-01/                             301
+/progetti/negozio/negozio-%7C-abbigliamento           /progetti/negozio-abbigliamento/               301
+/progetti/negozio/negozio-|-abbigliamento             /progetti/negozio-abbigliamento/               301
+/progetti/negozio/negozio-%7C-tabaccheria             /progetti/negozio-tabaccheria/                 301
+/progetti/negozio/negozio-|-tabaccheria               /progetti/negozio-tabaccheria/                 301
+/gallery-inaugurazione/opening/opening                /the-opening/                                  301
+/apertura-d-labdesign-chi-c-era                       /the-opening/                                  301
+/il-coraggio-di-osare                                 /news/2012-09-20-il-coraggio-di-osare/         301
+/video-inaugurazione-d---labdesign-a-treviglio        /video/                                        301
+/video-%7C                                            /video/                                        301
+/video-|                                              /video/                                        301
+/orari-apertura                                       /contatti/                                     301
+/iscriviti-alla-newsletter                            /contatti/                                     301
+/contatti-d-labdesign                                 /contatti/                                     301
+/news//d-labdesign-al-salone-del-mobile-di-bergamo    /news/2012-11-19-salone-del-mobile-bergamo/    301
+/news/d-labdesign-al-salone-del-mobile-di-bergamo     /news/2012-11-19-salone-del-mobile-bergamo/    301
+/news//notte-rosa                                     /news/2017-07-05-open-day-notte-rosa/          301
+/news/notte-rosa                                      /news/2017-07-05-open-day-notte-rosa/          301
+/backoffice/*                                         /404.html                                      410
+/backoffice                                           /404.html                                      410

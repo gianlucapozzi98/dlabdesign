@@ -1,0 +1,69 @@
+---
+/** Schema (non in scala) per arrivare: complesso Alcentro all'angolo tra Via De Gasperi e Via Monte Grappa, parcheggio sotterraneo da Via Setti. */
+interface Props {
+  id?: string;
+}
+const { id = 'alcentro' } = Astro.props;
+---
+
+<svg class="drawing alcentro" viewBox="0 0 640 440" role="img" aria-labelledby={`${id}-t ${id}-d`} data-draw data-draw-start="top 85%" data-draw-end="center 45%">
+  <title id={`${id}-t`}>Schema per arrivare allo showroom, non in scala</title>
+  <desc id={`${id}-d`}>
+    Il complesso Alcentro sta all'angolo tra Via De Gasperi e Via Monte Grappa. Lo showroom è in Via M.O. Giulio Setti 7e; da Via Setti si entra nel parcheggio sotterraneo a più livelli. Le posizioni sono indicative.
+  </desc>
+  <defs>
+    <pattern id={`${id}-h`} width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="9" stroke="currentColor" stroke-width="0.6" opacity="0.5"></line>
+    </pattern>
+  </defs>
+  <!-- strade -->
+  <g class="l2">
+    <path d="M20 340H520"></path>
+    <path d="M20 372H552"></path>
+    <path d="M520 20V340"></path>
+    <path d="M552 20V372"></path>
+  </g>
+  <g class="l3">
+    <path d="M20 356H536"></path>
+    <path d="M536 20V356"></path>
+  </g>
+  <!-- complesso -->
+  <rect class="no-draw" x="150" y="96" width="330" height="204" fill={`url(#${id}-h)`} opacity="0.9"></rect>
+  <path class="l1" d="M150 96H480V300H150Z"></path>
+  <path class="l2" d="M150 150H300V300M300 96V150"></path>
+  <!-- angolo -->
+  <path class="q" d="M492 312L506 326M480 316h22M496 300v22"></path>
+  <!-- Via Setti (indicativa) e parcheggio -->
+  <path class="l2" d="M108 20V300"></path>
+  <path class="l3" d="M128 20V300"></path>
+  <path class="q" d="M108 200H150"></path>
+  <circle class="l1" cx="76" cy="200" r="16"></circle>
+  <!-- showroom -->
+  <circle class="q" cx="222" cy="190" r="9"></circle>
+  <path class="q" d="M222 172v-34M222 208v14M204 190h-14M240 190h14"></path>
+  <text class="tx" x="168" y="128">Complesso Alcentro</text>
+  <text class="qt" x="236" y="232">D-Labdesign · 7e</text>
+  <text class="tx" x="40" y="392">Via De Gasperi</text>
+  <text class="tx" x="574" y="60" transform="rotate(90 574 60)">Via Monte Grappa</text>
+  <text class="tx" x="96" y="48" transform="rotate(-90 96 48)" text-anchor="end">Via Setti</text>
+  <text class="tx big" x="70" y="205">P</text>
+  <text class="tx" x="20" y="242">Parcheggio</text>
+  <text class="tx" x="20" y="258">sotterraneo</text>
+  <text class="tx note" x="20" y="430">Schema, non in scala · posizioni indicative</text>
+</svg>
+
+<style>
+  .alcentro {
+    width: 100%;
+    height: auto;
+    color: var(--c-inchiostro);
+  }
+  .alcentro .big {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .alcentro .note {
+    fill: var(--c-quota-testo);
+    font-size: 10px;
+  }
+</style>

@@ -1,0 +1,78 @@
+---
+/** Mappa OpenStreetMap caricata SOLO dopo il consenso "Mappa". Prima: lo schema a linee. */
+import AlcentroSchema from './AlcentroSchema.astro';
+import { SITE } from '../data/site';
+const { lat, lng } = SITE.showroom;
+const d = 0.004;
+const embed = `https://www.openstreetmap.org/export/embed.html?bbox=${lng - d * 1.6}%2C${lat - d}%2C${lng + d * 1.6}%2C${lat + d}&layer=mapnik&marker=${lat}%2C${lng}`;
+const osm = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=18/${lat}/${lng}`;
+const gmaps = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+---
+
+<div class="cmap" data-cmap={embed}>
+  <div class="cmap__frame" data-cmap-frame>
+    <AlcentroSchema />
+  </div>
+  <div class="cmap__bar">
+    <button type="button" class="btn btn--ghost" data-cmap-btn>
+      <span data-cmap-label>Mostra la mappa (OpenStreetMap)</span>
+    </button>
+    <a class="link" href={osm} target="_blank" rel="noopener">Apri in OpenStreetMap<span class="sr-only"> (nuova scheda)</span></a>
+    <a class="link" href={gmaps} target="_blank" rel="noopener">Indicazioni stradali<span class="sr-only"> con Google Maps (nuova scheda)</span></a>
+  </div>
+  <p class="cmap__note">La mappa interattiva arriva dai server di OpenStreetMap: si carica solo se la chiedi.</p>
+</div>
+
+<script>
+  import { consensoAttuale, accettaCategoria } from '../scripts/consent';
+  document.querySelectorAll<HTMLElement>('[data-cmap]').forEach((box) => {
+    const btn = box.querySelector<HTMLButtonElement>('[data-cmap-btn]')!;
+    const frame = box.querySelector<HTMLElement>('[data-cmap-frame]')!;
+    const load = () => {
+      const ifr = document.createElement('iframe');
+      ifr.src = box.dataset.cmap!;
+      ifr.title = 'Mappa: D-Labdesign, Via M.O. Giulio Setti 7e, Treviglio';
+      ifr.loading = 'lazy';
+      ifr.referrerPolicy = 'no-referrer';
+      frame.replaceChildren(ifr);
+      frame.classList.add('is-map');
+      btn.hidden = true;
+    };
+    btn.addEventListener('click', () => {
+      if (!consensoAttuale()?.mappe) accettaCategoria('mappe');
+      load();
+    });
+  });
+</script>
+
+<style>
+  .cmap {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .cmap__frame {
+    border: 1px solid var(--c-filo);
+    padding: var(--s-4);
+    background: var(--c-lucido);
+  }
+  .cmap__frame.is-map {
+    padding: 0;
+    aspect-ratio: 16 / 11;
+  }
+  .cmap__frame :global(iframe) {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    filter: grayscale(0.85) contrast(1.05);
+  }
+  .cmap__bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3) var(--s-5);
+    align-items: center;
+  }
+  .cmap__note {
+    font-size: var(--t-small);
+    color: var(--c-grafite);
+  }
+</style>

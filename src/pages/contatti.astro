@@ -1,0 +1,179 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import AppointmentForm from '../components/AppointmentForm.astro';
+import Visit from '../components/Visit.astro';
+import { SITE } from '../data/site';
+import { FAQ } from '../data/faq';
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+
+<Base
+  title="Contatti e appuntamenti"
+  description="Prenota un appuntamento nello showroom D-Labdesign a Treviglio: 0363 57152. Indirizzo, orari, parcheggio Alcentro e modulo di contatto."
+  jsonLd={[faqLd]}
+>
+  <PageHeader
+    title="Contatti"
+    lead="Martedì e mercoledì lo showroom apre solo su appuntamento. Negli altri giorni ti aspettiamo negli orari di apertura."
+    crumbs={[{ label: 'Contatti' }]}
+    tavola="C.01"
+    nota="Showroom"
+  />
+
+  <section class="wrap contact" id="appuntamento" aria-labelledby="appt-title">
+    <div class="contact__side">
+      <h2 class="h2" id="appt-title">Prenota un appuntamento</h2>
+      <p class="lead">Il modo più rapido è il telefono.</p>
+      <a class="contact__big" href={SITE.appuntamenti.href}>
+        <span class="mono muted">Appuntamenti</span>
+        <span class="contact__num">{SITE.appuntamenti.testo}</span>
+      </a>
+      <ul class="contact__list" role="list">
+        <li><span class="mono muted">Showroom</span> <a class="link" href={SITE.telefono.href}>{SITE.telefono.testo}</a></li>
+        <li><span class="mono muted">Email</span> <a class="link" href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+        <li><span class="mono muted">Facebook</span> <a class="link" href={SITE.social.facebook} target="_blank" rel="noopener">D-Labdesign by Arredamenti Salini<span class="sr-only"> (nuova scheda)</span></a></li>
+      </ul>
+      <div class="contact__news">
+        <h3 class="mono">Newsletter</h3>
+        <p>
+          L’iscrizione alla newsletter è separata da questo modulo e si fa sulla pagina del servizio che la gestisce, dove dai un consenso apposito.
+        </p>
+        <a class="btn btn--ghost" href={SITE.newsletter} target="_blank" rel="noopener">Iscriviti alla newsletter<span class="sr-only"> (sito esterno, nuova scheda)</span></a>
+      </div>
+    </div>
+    <div class="contact__form">
+      <h2 class="mono contact__fh">Oppure scrivici</h2>
+      <AppointmentForm />
+    </div>
+  </section>
+
+  <Visit tav="C.02" title="Come arrivare" />
+
+  <section class="wrap faq section" aria-labelledby="faq-title">
+    <h2 class="h2" id="faq-title">Domande frequenti</h2>
+    <div class="faq__list">
+      {
+        FAQ.map((f, i) => (
+          <details class="faq__item" open={i === 0}>
+            <summary>
+              <span class="mono faq__n">{String(i + 1).padStart(2, '0')}</span>
+              <span>{f.q}</span>
+            </summary>
+            <p>{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact {
+    display: grid;
+    gap: var(--s-8) var(--gutter);
+    padding-block: var(--s-7) var(--s-section);
+  }
+  @media (min-width: 960px) {
+    .contact {
+      grid-template-columns: 5fr 1fr 6fr;
+    }
+    .contact__form {
+      grid-column: 3;
+    }
+  }
+  .contact__side {
+    display: grid;
+    gap: var(--s-5);
+    align-content: start;
+  }
+  .contact__big {
+    display: grid;
+    gap: var(--s-2);
+    padding-block: var(--s-5);
+    border-block: 1px solid currentColor;
+    text-decoration: none;
+  }
+  .contact__num {
+    font-size: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    transition: color var(--d-2) var(--ease);
+  }
+  .contact__big:hover .contact__num {
+    color: var(--c-quota-testo);
+  }
+  .contact__list {
+    display: grid;
+    gap: var(--s-3);
+    list-style: none;
+    padding: 0;
+  }
+  .contact__list li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    align-items: baseline;
+  }
+  .contact__list .mono {
+    min-width: 7rem;
+  }
+  .contact__news {
+    display: grid;
+    gap: var(--s-3);
+    justify-items: start;
+    margin-top: var(--s-5);
+    padding: var(--s-5);
+    border: 1px solid var(--c-filo);
+    font-size: var(--t-small);
+  }
+  .contact__fh {
+    padding-bottom: var(--s-3);
+    border-bottom: 1px solid currentColor;
+    margin-bottom: var(--s-5);
+  }
+  .faq__list {
+    margin-top: var(--s-7);
+    border-top: 1px solid currentColor;
+    max-width: 60rem;
+  }
+  .faq__item {
+    border-bottom: 1px solid var(--c-filo);
+  }
+  .faq__item summary {
+    display: flex;
+    gap: var(--s-4);
+    align-items: baseline;
+    padding-block: var(--s-4);
+    cursor: pointer;
+    font-size: var(--t-lead);
+    letter-spacing: -0.01em;
+    list-style: none;
+  }
+  .faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq__item summary::after {
+    content: '+';
+    margin-left: auto;
+    font-family: var(--font-mono);
+    color: var(--c-quota-testo);
+    transition: transform var(--d-2) var(--ease);
+  }
+  .faq__item[open] summary::after {
+    transform: rotate(45deg);
+  }
+  .faq__n {
+    color: var(--c-quota-testo);
+  }
+  .faq__item p {
+    padding: 0 0 var(--s-5) calc(2ch + var(--s-4) + 1.5em);
+    max-width: 62ch;
+  }
+</style>

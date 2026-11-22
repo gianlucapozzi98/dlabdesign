@@ -1,0 +1,73 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Closing from '../../components/Closing.astro';
+import { SITE } from '../../data/site';
+
+export async function getStaticPaths() {
+  const news = await getCollection('news');
+  return news.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props as { entry: CollectionEntry<'news'> };
+const d = entry.data;
+const fmt = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+const paras = d.testo.split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean);
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'NewsArticle',
+  headline: d.titolo,
+  datePublished: d.data.toISOString().slice(0, 10),
+  publisher: { '@type': 'Organization', name: SITE.nomeCompleto },
+  mainEntityOfPage: `${SITE.url}/news/${entry.id}/`,
+};
+---
+
+<Base title={d.titolo} description={(d.sintesi ?? paras[0]).slice(0, 155)} type="article" image={d.immagine ?? undefined} imageAlt={d.immagineAlt} jsonLd={[ld]}>
+  <PageHeader title={d.titolo} crumbs={[{ href: '/news/', label: 'News' }, { label: fmt.format(d.data) }]}>
+    <p class="mono news-meta">
+      <time datetime={d.data.toISOString().slice(0, 10)}>{fmt.format(d.data)}</time>
+      {d.archivio && <span> · Dall’archivio del sito precedente</span>}
+    </p>
+  </PageHeader>
+  <article class="wrap section news-art">
+    <div class="prose">
+      {paras.map((p) => <p>{p}</p>)}
+      {entry.id.includes('video') && <p><a class="link" href="/video/">Vai al video</a></p>}
+    </div>
+    {
+      d.immagine && (
+        <figure class="news-art__fig">
+          <Image src={d.immagine} alt={d.immagineAlt ?? ''} widths={[480, 800]} sizes="(min-width: 960px) 40vw, 92vw" format="avif" />
+        </figure>
+      )
+    }
+  </article>
+  <nav class="wrap news-back" aria-label="Torna alle news"><a class="btn btn--ghost" href="/news/">Tutte le news</a></nav>
+  <Closing />
+</Base>
+
+<style>
+  .news-meta {
+    margin-top: var(--s-5);
+    color: var(--c-quota-testo);
+  }
+  .news-art {
+    display: grid;
+    gap: var(--s-7) var(--gutter);
+    padding-top: var(--s-5);
+    font-size: var(--t-lead);
+  }
+  @media (min-width: 960px) {
+    .news-art {
+      grid-template-columns: 6fr 1fr 5fr;
+    }
+    .news-art__fig {
+      grid-column: 3;
+    }
+  }
+  .news-back {
+    padding-bottom: var(--s-6);
+  }
+</style>

@@ -1,0 +1,283 @@
+---
+import '@fontsource-variable/hanken-grotesk/wght.css';
+import '@fontsource/ibm-plex-mono/latin-400.css';
+import '../styles/global.css';
+import hankenUrl from '@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2?url';
+import { getImage } from 'astro:assets';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CookieBanner from '../components/CookieBanner.astro';
+import { SITE, ORARI } from '../data/site';
+import ogSource from '../assets/tour/tour-01.jpg';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: ImageMetadata;
+  imageAlt?: string;
+  noindex?: boolean;
+  loader?: boolean;
+  jsonLd?: Record<string, unknown>[];
+  type?: 'website' | 'article';
+}
+const { title, description, image, imageAlt, noindex = false, loader = false, jsonLd = [], type = 'website' } = Astro.props;
+
+const path = Astro.url.pathname.endsWith('/') || Astro.url.pathname.includes('.') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const canonical = new URL(path, Astro.site).href;
+const og = await getImage({ src: image ?? ogSource, width: 1200, height: 630, fit: 'cover', format: 'jpg', quality: 82 });
+const ogUrl = new URL(og.src, Astro.site).href;
+// meta title ≤ 60 caratteri
+const cut = (t: string, n: number) => (t.length <= n ? t : t.slice(0, t.lastIndexOf(' ', n - 1)).replace(/[\s,.;:—–-]+$/, '') + '…');
+const withBrand = title.includes('D-Labdesign') ? title : `${title} | D-Labdesign`;
+const fullTitle = withBrand.length <= 60 ? withBrand : cut(title, 60);
+
+const business = {
+  '@context': 'https://schema.org',
+  '@type': 'FurnitureStore',
+  '@id': `${SITE.url}/#showroom`,
+  name: SITE.nomeCompleto,
+  alternateName: SITE.nome,
+  description: SITE.descrizione,
+  url: `${SITE.url}/`,
+  image: ogUrl,
+  logo: `${SITE.url}/icon-512.png`,
+  telephone: '+39 0363 301622',
+  email: SITE.email,
+  vatID: `IT${SITE.societa.piva}`,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: SITE.showroom.via,
+    postalCode: SITE.showroom.cap,
+    addressLocality: SITE.showroom.citta,
+    addressRegion: SITE.showroom.provincia,
+    addressCountry: 'IT',
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: SITE.showroom.lat, longitude: SITE.showroom.lng },
+  openingHoursSpecification: ORARI.filter((g) => g.fasce.length).flatMap((g) =>
+    g.fasce.map(([opens, closes]) => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: g.dow, opens, closes })),
+  ),
+  sameAs: [SITE.social.facebook],
+  parentOrganization: { '@type': 'Organization', name: SITE.societa.ragioneSociale, taxID: SITE.societa.codiceFiscale },
+};
+const schemas = [business, ...jsonLd];
+---
+
+<!doctype html>
+<html lang="it" data-intro={loader ? "" : undefined}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex, follow" /> : <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#eeede8" />
+    <meta name="color-scheme" content="light" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preload" href={hankenUrl} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:locale" content="it_IT" />
+    <meta property="og:site_name" content="D-Labdesign" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt ?? 'Lo showroom D-Labdesign a Treviglio, nel cortile del complesso Alcentro.'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogUrl} />
+
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!rm) d.classList.add('motion');
+        if (d.hasAttribute("data-intro") && !rm) {
+          try {
+            if (!sessionStorage.getItem('dl-intro')) {
+              d.classList.add('loading');
+              sessionStorage.setItem('dl-intro', '1');
+            }
+          } catch (e) {}
+        }
+        // se gli script non partono, si torna alla versione statica.
+        // Il conto parte solo quando la scheda è visibile (le schede in background rallentano tutto).
+        var arm = function () {
+          setTimeout(function () {
+            if (!window.__dlMotion) d.classList.remove('motion', 'loading');
+          }, 9000);
+        };
+        if (document.visibilityState === 'visible') arm();
+        else
+          document.addEventListener('visibilitychange', function onVis() {
+            if (document.visibilityState !== 'visible') return;
+            document.removeEventListener('visibilitychange', onVis);
+            arm();
+          });
+      })();
+    </script>
+    {schemas.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Vai al contenuto</a>
+    {
+      loader && (
+        <div class="loader" data-loader aria-hidden="true">
+          <div class="loader__row mono">
+            <span>A</span>
+            <span class="loader__track">
+              <span class="loader__line" data-line />
+            </span>
+            <span>A'</span>
+          </div>
+          <p class="loader__pct">
+            <span data-pct>00</span>
+            <span class="loader__sign">%</span>
+          </p>
+          <p class="loader__hint mono">Tocca o premi un tasto per saltare</p>
+        </div>
+      )
+    }
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <CookieBanner />
+    <div class="cursor" data-cursor-el aria-hidden="true"><span></span></div>
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  main:focus {
+    outline: none;
+  }
+  /* --- caricamento --- */
+  .loader {
+    display: none;
+  }
+  .loading .loader {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--s-5);
+    background: var(--c-lucido);
+    color: var(--c-inchiostro);
+    transition: opacity 240ms var(--ease);
+  }
+  .loader.is-done {
+    opacity: 0;
+  }
+  .loader__row {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    width: min(560px, 76vw);
+    color: var(--c-grafite);
+  }
+  .loader__track {
+    position: relative;
+    flex: 1;
+    height: 1px;
+    background: var(--c-filo);
+  }
+  .loader__line {
+    position: absolute;
+    inset: -0.5px 0;
+    background: var(--c-quota);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+  .loader__pct {
+    font-size: clamp(3rem, 2rem + 4vw, 5.5rem);
+    font-weight: 300;
+    letter-spacing: -0.05em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .loader__sign {
+    font-size: 0.4em;
+    vertical-align: top;
+    color: var(--c-quota-testo);
+    letter-spacing: 0;
+  }
+  .loader__hint {
+    color: var(--c-grafite);
+    font-size: 0.75rem;
+  }
+  .loading body {
+    overflow: hidden;
+  }
+  /* --- cursore a mirino --- */
+  .cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 300;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    display: none;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .motion .cursor {
+      display: block;
+    }
+  }
+  .cursor span {
+    position: absolute;
+    left: -21px;
+    top: -21px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--c-quota);
+    opacity: 0;
+    transform: scale(0.4);
+    transition:
+      opacity var(--d-2) var(--ease),
+      transform var(--d-2) var(--ease);
+  }
+  .cursor span::before,
+  .cursor span::after {
+    content: '';
+    position: absolute;
+  }
+  .cursor span::before {
+    left: -9px;
+    right: -9px;
+    top: 50%;
+    height: 1px;
+    background: linear-gradient(90deg, var(--c-quota) 14px, transparent 14px calc(100% - 14px), var(--c-quota) calc(100% - 14px));
+  }
+  .cursor span::after {
+    top: -9px;
+    bottom: -9px;
+    left: 50%;
+    width: 1px;
+    background: linear-gradient(180deg, var(--c-quota) 14px, transparent 14px calc(100% - 14px), var(--c-quota) calc(100% - 14px));
+  }
+  .cursor.is-on span {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .cursor.is-on.is-down span {
+    transform: scale(0.78);
+  }
+</style>

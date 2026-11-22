@@ -1,0 +1,12 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ProjectsIndex from '../../components/ProjectsIndex.astro';
+import Closing from '../../components/Closing.astro';
+---
+
+<Base title="Progetti per la casa" description="Progetti per la casa realizzati da D-Labdesign: ristrutturazioni, cucine e zone giorno, con le foto vere prima, durante e dopo i lavori.">
+  <PageHeader title="Casa" lead="Progetti realizzati per la casa." crumbs={[{ href: '/progetti/', label: 'Progetti' }, { label: 'Casa' }]} tavola="P.01" nota="Realizzati" />
+  <ProjectsIndex categoria="casa" showStudi={false} />
+  <Closing />
+</Base>

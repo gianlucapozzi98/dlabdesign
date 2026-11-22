@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 667" data-scene="tour-04" data-lines="29" fill="none">
+  <!-- Rilievo dalla foto: linee estratte automaticamente da tour-04.jpg (scripts/trace-tour.mjs). Non è un disegno di progetto. -->
+  <path class="p" d="M808.5 -0.7L353.6 83.6"/>
+  <path class="p" d="M284.1 493.5L-10.1 597.6"/>
+  <path class="p" d="M943.1 373.1L943.1 96.9"/>
+  <path class="p" d="M612.0 353.5L368.0 353.5"/>
+  <path class="p" d="M279.4 91.2L57.5 -5.3"/>
+  <path class="p" d="M918.3 115.9L684.7 163.4"/>
+  <path class="p" d="M922.0 468.7L868.3 676.4"/>
+  <path class="p" d="M571.0 388.3L381.4 455.5"/>
+  <path class="p" d="M374.2 89.4L199.0 -5.8"/>
+  <path class="s" d="M784.3 404.8L760.1 601.7"/>
+  <path class="s" d="M1002.0 137.6L960.0 306.3"/>
+  <path class="s" d="M607.6 277.5L453.7 292.3"/>
+  <path class="s" d="M606.5 299.5L452.4 299.5"/>
+  <path class="s" d="M628.2 36.0L513.4 129.0"/>
+  <path class="s" d="M959.4 258.7L959.4 111.3"/>
+  <path class="s" d="M212.0 645.8L78.1 665.8"/>
+  <path class="s" d="M708.2 14.7L708.2 143.1"/>
+  <path class="s" d="M603.1 377.8L479.1 377.8"/>
+  <path class="s" d="M828.7 346.8L711.3 346.8"/>
+  <path class="s" d="M828.7 351.1L712.4 351.1"/>
+  <path class="s" d="M784.6 563.6L784.6 676.4"/>
+  <path class="s" d="M1009.3 97.4L907.0 118.2"/>
+  <path class="s" d="M590.6 82.6L518.3 157.5"/>
+  <path class="s" d="M695.3 118.9L591.3 118.9"/>
+  <path class="s" d="M526.5 341.7L428.0 341.7"/>
+  <path class="s" d="M879.3 506.8L785.5 530.2"/>
+  <path class="s" d="M914.0 531.3L818.0 520.4"/>
+  <path class="s" d="M170.9 586.2L87.7 632.3"/>
+  <path class="s" d="M941.4 380.8L918.6 472.0"/>
+</svg>

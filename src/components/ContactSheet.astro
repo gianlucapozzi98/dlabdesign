@@ -1,0 +1,118 @@
+---
+/**
+ * Provino a contatto (contact sheet) delle foto vere dell'inaugurazione.
+ * Le foto "scelte" sono cerchiate col rosso, come col pastello grasso sui provini.
+ */
+import { Image, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { OPENING_FOTO, OPENING } from '../data/opening';
+
+interface Props {
+  limit?: number;
+}
+const { limit } = Astro.props;
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/opening/*.jpg', { eager: true });
+const list = (limit ? OPENING_FOTO.slice(0, limit) : OPENING_FOTO).map(async (f, i) => {
+  const src = files[`../assets/opening/${f.file}.jpg`]?.default;
+  if (!src) throw new Error(`Foto mancante: ${f.file}`);
+  const big = await getImage({ src, width: src.width, format: 'webp', quality: 82 });
+  return { ...f, src, big: big.src, n: i + 1 };
+});
+const foto = await Promise.all(list);
+---
+
+<div class="sheet" data-lb-group>
+  <ol class="sheet__grid" role="list">
+    {
+      foto.map((f) => (
+        <li class="frame">
+          <span class="frame__edge mono" aria-hidden="true">
+            <span>{f.n}</span>
+            <span>▸ {f.n}A</span>
+          </span>
+          <a class="frame__link" href={f.big} data-lb data-cap={`${f.alt} ${OPENING.credito}.`} data-cursor>
+            <Image src={f.src} alt={f.alt} widths={[240, 400, 560]} sizes="(min-width: 1200px) 22vw, (min-width: 760px) 30vw, 46vw" loading="lazy" format="avif" quality={62} />
+            <span class="sr-only">Apri la foto {f.n} a pieno schermo</span>
+          </a>
+          {f.scelta && (
+            <svg class="frame__mark" viewBox="0 0 100 70" preserveAspectRatio="none" aria-hidden="true" data-draw="enter">
+              <path d="M8 34C6 14 40 4 66 7C92 10 98 30 93 46C87 63 53 68 30 63C11 59 3 47 9 30C12 22 20 17 26 15" />
+            </svg>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+  <p class="sheet__credit mono">{OPENING.credito} · Le foto ritraggono gli ospiti dell’inaugurazione</p>
+</div>
+
+<style>
+  .sheet__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-5) var(--s-3);
+    list-style: none;
+    padding: 0;
+  }
+  @media (min-width: 760px) {
+    .sheet__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1200px) {
+    .sheet__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .frame {
+    position: relative;
+    display: grid;
+    gap: 6px;
+  }
+  .frame__edge {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #e0a85a;
+    letter-spacing: 0.08em;
+  }
+  .frame__link {
+    display: block;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--c-carta-scura);
+    outline-offset: 4px;
+  }
+  .frame__link :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.92);
+    transition: transform var(--d-3) var(--ease), filter var(--d-3) var(--ease);
+  }
+  .frame__link:hover :global(img),
+  .frame__link:focus-visible :global(img) {
+    transform: scale(1.04);
+    filter: saturate(1.05);
+  }
+  .frame__mark {
+    position: absolute;
+    left: -6%;
+    top: 4%;
+    width: 112%;
+    height: 106%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .frame__mark path {
+    fill: none;
+    stroke: var(--c-quota-chiaro);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+  .sheet__credit {
+    margin-top: var(--s-6);
+    color: var(--c-grafite-chiaro);
+  }
+</style>

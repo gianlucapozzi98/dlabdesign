@@ -1,0 +1,32 @@
+titolo: NEGOZIO | ABBIGLIAMENTO
+categoria: negozio
+ordine: 2
+sintesi: Interni progettati e realizzati per un negozio di abbigliamento. Metallo e legno, il freddo e il caldo.
+descrizione: |-
+  Rifacimento degli interni, dalla progettazione alla realizzazione, per un negozio di abbigliamento.
+
+  Le strutture portanti in metallo dividono gli spazi in maniera funzionale e danno all'ambiente modernità e pulizia. Metallo e legno si fondono, e l'ambiente diventa moderno e passionale insieme.
+
+  Il «freddo» e il «caldo», invece di essere due opposti, qui si combinano.
+luogo: ''
+anno: ''
+fonte: 'Testo e foto dal sito attuale: d-labdesign.it/progetti/negozio/negozio-|-abbigliamento (letto il 22/11/2026). Progetto non citato nella direzione artistica: da confermare. Escluse le foto con l''insegna del negozio e con marchi di terzi.'
+copertina: ../../assets/progetti/negozio-abbigliamento/negozio5.jpg
+copertinaAlt: Interno del negozio con un banco rivestito in legno dalle venature marcate, scaffali bianchi con borse e maglioni, appendiabiti in metallo.
+foto:
+  - immagine: ../../assets/progetti/negozio-abbigliamento/negozio5.jpg
+    alt: Il banco rivestito in legno dalle venature marcate e, dietro, le pareti attrezzate con scaffali bianchi.
+    fase: dopo
+    didascalia: ''
+  - immagine: ../../assets/progetti/negozio-abbigliamento/fiori.jpg
+    alt: Il banco in legno, un tavolino bianco con un vaso di orchidee e un pannello rigato che separa le zone.
+    fase: dopo
+    didascalia: ''
+  - immagine: ../../assets/progetti/negozio-abbigliamento/mensole.jpg
+    alt: Due pareti attrezzate. A sinistra scaffali e appendiabiti bianchi, a destra caselle con ripiani in vetro.
+    fase: dopo
+    didascalia: ''
+  - immagine: ../../assets/progetti/negozio-abbigliamento/dettaglio01.jpg
+    alt: Due dettagli degli scaffali bianchi con montanti scuri in metallo, borse e capi piegati.
+    fase: dopo
+    didascalia: ''

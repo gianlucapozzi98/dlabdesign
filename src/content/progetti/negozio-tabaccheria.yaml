@@ -1,0 +1,44 @@
+titolo: NEGOZIO | TABACCHERIA
+categoria: negozio
+ordine: 3
+sintesi: Uno spazio luminoso fatto di ecolegno, laccato, pannelli materici e vetro.
+descrizione: |-
+  Progettazione e realizzazione di uno spazio adibito a tabaccheria.
+
+  L'alternanza di ecolegno, laccato e pannellature con effetto materico, insieme alla leggerezza del vetro, dà grande luminosità all'ambiente.
+
+  Un attento studio di controsoffitti, illuminazione e colori rende lo spazio moderno, fresco e pulito.
+luogo: ''
+anno: ''
+fonte: 'Testo e foto dal sito attuale: d-labdesign.it/progetti/negozio/negozio-|-tabaccheria (letto il 22/11/2026). Progetto non citato nella direzione artistica: da confermare. Esclusa la foto con gli scaffali delle sigarette in primo piano.'
+copertina: ../../assets/progetti/negozio-tabaccheria/img-9471a.jpg
+copertinaAlt: Una parete rivestita di pannelli grigi con effetto materico, mensole bianche sospese e due vasi di orchidee su una base in legno chiaro.
+foto:
+  - immagine: ../../assets/progetti/negozio-tabaccheria/prima.jpg
+    alt: Prima dei lavori. Il locale vuoto con le pareti rosa, visto da due lati.
+    fase: prima
+    didascalia: ''
+  - immagine: ../../assets/progetti/negozio-tabaccheria/durante.jpg
+    alt: Il locale lungo e stretto con il pavimento ancora protetto, i faretti su binario e la luce nel controsoffitto.
+    fase: ''
+    didascalia: ''
+  - immagine: ../../assets/progetti/negozio-tabaccheria/img-9471a.jpg
+    alt: La parete con pannelli grigi effetto materico, le mensole bianche sospese e le orchidee.
+    fase: dopo
+    didascalia: ''
+  - immagine: ../../assets/progetti/negozio-tabaccheria/img-9463a.jpg
+    alt: Un piano d'appoggio bianco lungo la parete con sgabelli, dettagli rossi e una foto in bianco e nero sul fondo.
+    fase: dopo
+    didascalia: ''
+  - immagine: ../../assets/progetti/negozio-tabaccheria/img-9482a.jpg
+    alt: Il corridoio con le vetrine espositive bianche illuminate e una striscia rossa sul pavimento.
+    fase: dopo
+    didascalia: ''
+  - immagine: ../../assets/progetti/negozio-tabaccheria/img-9477a.jpg
+    alt: Il banco bianco con il piano in vetro, una lampada ad anelli e gli espositori colorati.
+    fase: dopo
+    didascalia: ''
+  - immagine: ../../assets/progetti/negozio-tabaccheria/img-9472a.jpg
+    alt: Il banco di vendita con la protezione in vetro e due schermi appesi in alto.
+    fase: dopo
+    didascalia: ''

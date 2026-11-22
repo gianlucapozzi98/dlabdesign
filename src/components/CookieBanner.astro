@@ -1,0 +1,124 @@
+---
+/**
+ * Banner cookie (Linee guida Garante 2021): Accetta / Rifiuta / Personalizza con pari evidenza,
+ * la X chiude e rifiuta, nessuno script con cookie prima del consenso, "Preferenze cookie" nel footer.
+ */
+---
+
+<section class="cookie" data-cookie hidden aria-labelledby="ck-title" role="region">
+  <button type="button" class="cookie__x" data-ck="reject" aria-label="Chiudi: continua senza accettare">
+    <span aria-hidden="true">×</span>
+  </button>
+  <h2 id="ck-title" class="cookie__title">Cookie e contenuti esterni</h2>
+  <p class="cookie__text">
+    Questo sito usa solo cookie tecnici, necessari a farlo funzionare. Video (YouTube), mappa (OpenStreetMap) e statistiche si attivano
+    solo se li accetti: puoi cambiare idea quando vuoi da «Preferenze cookie» in fondo alla pagina.{' '}
+    <a class="link" href="/cookie/">Leggi la cookie policy</a>.
+  </p>
+
+  <form class="cookie__form" data-ck-form hidden>
+    <fieldset>
+      <legend class="mono">Scegli cosa attivare</legend>
+      <label class="check">
+        <input type="checkbox" checked disabled />
+        <span><strong>Necessari</strong> — servono a far funzionare il sito e a ricordare la tua scelta. Sempre attivi.</span>
+      </label>
+      <label class="check">
+        <input type="checkbox" name="video" />
+        <span><strong>Video</strong> — carica i video da YouTube, che può usare cookie e tracciamento.</span>
+      </label>
+      <label class="check">
+        <input type="checkbox" name="mappe" />
+        <span><strong>Mappa</strong> — carica la mappa da OpenStreetMap (il tuo indirizzo IP arriva ai loro server).</span>
+      </label>
+      <label class="check">
+        <input type="checkbox" name="statistiche" />
+        <span><strong>Statistiche</strong> — misura anonima delle visite, solo se attivata dal titolare.</span>
+      </label>
+    </fieldset>
+    <button type="submit" class="btn">Salva le scelte</button>
+  </form>
+
+  <div class="cookie__actions" data-ck-actions>
+    <button type="button" class="btn" data-ck="accept">Accetta tutti</button>
+    <button type="button" class="btn" data-ck="reject">Rifiuta</button>
+    <button type="button" class="btn btn--ghost" data-ck="customize" aria-expanded="false">Personalizza</button>
+  </div>
+</section>
+
+<style>
+  .cookie {
+    position: fixed;
+    z-index: 90;
+    left: var(--s-3);
+    right: var(--s-3);
+    bottom: var(--s-3);
+    max-width: 560px;
+    max-height: calc(100svh - var(--nav-h) - 24px);
+    overflow-y: auto;
+    padding: var(--s-5);
+    background: var(--c-lucido);
+    color: var(--c-inchiostro);
+    border: 1px solid var(--c-inchiostro);
+    box-shadow: 0 14px 40px -18px rgb(20 22 26 / 0.45);
+    display: grid;
+    gap: var(--s-4);
+  }
+  .cookie[hidden] {
+    display: none;
+  }
+  /* menu mobile aperto: il banner si nasconde finché il menu resta aperto, poi ricompare */
+  :global(html.menu-aperto) .cookie {
+    visibility: hidden;
+  }
+  @media (min-width: 760px) {
+    .cookie {
+      left: auto;
+      right: var(--s-5);
+      bottom: var(--s-5);
+    }
+  }
+  .cookie__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    padding-right: 2.5rem;
+  }
+  .cookie__text {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .cookie__x {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+  .cookie__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s-2);
+  }
+  .cookie__actions .btn {
+    justify-content: center;
+  }
+  .cookie__actions [data-ck='customize'] {
+    grid-column: 1 / -1;
+  }
+  .cookie__form {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .cookie__form fieldset {
+    border: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-3);
+  }
+  .cookie__form legend {
+    margin-bottom: var(--s-3);
+  }
+</style>

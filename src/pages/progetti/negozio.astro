@@ -1,0 +1,12 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import ProjectsIndex from '../../components/ProjectsIndex.astro';
+import Closing from '../../components/Closing.astro';
+---
+
+<Base title="Progetti per negozi" description="Interni di negozi progettati e realizzati da D-Labdesign: un negozio di abbigliamento e una tabaccheria, con le foto vere dei lavori.">
+  <PageHeader title="Negozio" lead="Interni progettati e realizzati per attività commerciali." crumbs={[{ href: '/progetti/', label: 'Progetti' }, { label: 'Negozio' }]} tavola="P.02" nota="Realizzati" />
+  <ProjectsIndex categoria="negozio" showStudi={false} />
+  <Closing />
+</Base>

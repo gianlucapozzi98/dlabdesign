@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ConsentVideo from '../components/ConsentVideo.astro';
+import Closing from '../components/Closing.astro';
+import poster from '../assets/opening/mg_3562.jpg';
+---
+
+<Base title="Video" description="Il video dell’inaugurazione dello Space Concept D-Labdesign a Treviglio: dai preparativi alla serata.">
+  <PageHeader title="Video" lead="Il video dell’inaugurazione dello Space Concept D-Labdesign: dai preparativi alla serata." crumbs={[{ label: 'Video' }]} tavola="V.01" nota="YouTube" />
+  <section class="wrap section vid" aria-label="Video dell’inaugurazione">
+    <ConsentVideo youtubeId="s1OqLSYq2kc" title="Inaugurazione D-Labdesign, Treviglio" poster={poster} posterAlt="L’interno dello showroom la sera dell’inaugurazione." />
+    <p class="muted vid__note">
+      Il video è pubblicato su YouTube. Prima di caricarlo ti chiediamo il consenso, perché YouTube può usare cookie. Puoi anche guardarlo direttamente su
+      YouTube.
+    </p>
+  </section>
+  <Closing />
+</Base>
+
+<style>
+  .vid {
+    padding-top: var(--s-6);
+  }
+  .vid__note {
+    margin-top: var(--s-4);
+    max-width: 60ch;
+    font-size: var(--t-small);
+  }
+</style>

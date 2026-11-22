@@ -1,0 +1,42 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+import { SITE } from '../data/site';
+---
+
+<LegalPage title="Cookie policy" description="Come il sito D-Labdesign usa cookie e strumenti simili: solo tecnici, il resto dopo il consenso. Bozza da validare.">
+  <p>
+    Questo sito segue le Linee guida del Garante per la protezione dei dati personali sui cookie (10 giugno 2021): all’apertura puoi accettare, rifiutare o
+    scegliere. Chiudere il banner con la «×» equivale a rifiutare. Nessuno script che usa cookie o traccia la navigazione parte prima della tua scelta.
+  </p>
+
+  <h2>Strumenti tecnici (sempre attivi)</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th scope="col">Nome</th><th scope="col">Tipo</th><th scope="col">A cosa serve</th><th scope="col">Durata</th></tr></thead>
+      <tbody>
+        <tr><td><code>dl-consenso</code></td><td>localStorage, prima parte</td><td>Ricorda la tua scelta sui cookie</td><td>6 mesi</td></tr>
+        <tr><td><code>dl-intro</code></td><td>sessionStorage, prima parte</td><td>Mostra l’animazione di caricamento una sola volta per visita</td><td>Fino alla chiusura della scheda</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Contenuti esterni (solo con il tuo consenso)</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th scope="col">Categoria</th><th scope="col">Fornitore</th><th scope="col">Cosa succede</th></tr></thead>
+      <tbody>
+        <tr><td>Video</td><td>YouTube (Google), modalità privacy avanzata (youtube-nocookie.com)</td><td>Il video si carica solo dopo il clic su «Accetta i video e riproduci». YouTube può usare cookie e altri strumenti.</td></tr>
+        <tr><td>Mappa</td><td>OpenStreetMap Foundation</td><td>La mappa interattiva si carica solo dopo il clic su «Mostra la mappa». Il tuo indirizzo IP arriva ai loro server.</td></tr>
+        <tr><td>Statistiche</td><td><span class="placeholder">[da definire, es. strumento senza cookie]</span></td><td>Oggi non attive. Se il titolare le attiva, partono solo con il tuo consenso.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Link esterni</h2>
+  <p>I link a Facebook, Invionews (newsletter), Google Maps e OpenStreetMap aprono siti di terzi, con le loro policy. Nessuno di questi viene caricato finché non ci clicchi.</p>
+
+  <h2>Cambiare la scelta</h2>
+  <p>Puoi cambiare idea in ogni momento dal pulsante «Preferenze cookie» in fondo a ogni pagina. Puoi anche cancellare i dati del sito dalle impostazioni del browser.</p>
+
+  <p>Per domande: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>. Informativa completa: <a href="/privacy/">privacy</a>.</p>
+</LegalPage>

@@ -1,0 +1,44 @@
+---
+import { SITE, CTA } from '../data/site';
+---
+
+<section class="closing section" aria-labelledby="closing-title">
+  <div class="wrap">
+    <svg class="drawing closing__line" viewBox="0 0 1200 24" preserveAspectRatio="none" aria-hidden="true" data-draw="enter">
+      <path class="q" d="M0 12H1200M0 4V20M1200 4V20"></path>
+    </svg>
+    <h2 class="h-mega closing__title" id="closing-title">{SITE.chiusura}</h2>
+    <div class="closing__row">
+      <p class="lead">Vieni a vedere lo showroom. Martedì e mercoledì solo su appuntamento.</p>
+      <div class="btn-row">
+        <a class="btn" href={CTA.href}>{CTA.label}</a>
+        <a class="btn btn--ghost" href={SITE.appuntamenti.href}>{SITE.appuntamenti.testo}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .closing {
+    padding-bottom: var(--s-9);
+  }
+  .closing__line {
+    width: 100%;
+    height: 24px;
+    margin-bottom: var(--s-7);
+  }
+  .closing__title {
+    max-width: 14ch;
+  }
+  .closing__row {
+    margin-top: var(--s-7);
+    display: grid;
+    gap: var(--s-5);
+    align-items: end;
+  }
+  @media (min-width: 960px) {
+    .closing__row {
+      grid-template-columns: 1fr auto;
+    }
+  }
+</style>

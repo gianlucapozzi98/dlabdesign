@@ -1,0 +1,40 @@
+titolo: CASA | 01
+categoria: casa
+ordine: 1
+sintesi: Cucina e zona giorno rifatte da cima a fondo, dalle murature alla scelta dei materiali.
+descrizione: |-
+  Ristrutturazione a 360 gradi dell'ambiente cucina e della zona giorno: lo studio è partito da murature, cartongessi, pavimentazione e illuminazione ed è arrivato fino alla scelta dei materiali.
+
+  Progetto e arredamento sono stati realizzati a disegno e prodotti nella nostra falegnameria.
+
+  Nella galleria, l'avanzamento dei lavori: prima, durante e dopo.
+luogo: ''
+anno: ''
+fonte: 'Testo e foto dal sito attuale: d-labdesign.it/progetti/casa/casa-|-01 (letto il 22/11/2026). Da confermare.'
+copertina: ../../assets/progetti/casa-01/dopo-01.jpg
+copertinaAlt: Cucina finita con ante alte chiare e lucide, basi in legno scuro, isola con piano cottura e cappa in acciaio, sgabelli bianchi.
+foto:
+  - immagine: ../../assets/progetti/casa-01/prima.jpg
+    alt: Prima dei lavori. La stanza con le vecchie piastrelle alle pareti e la porta-finestra aperta sul giardino.
+    fase: prima
+    didascalia: ''
+  - immagine: ../../assets/progetti/casa-01/durante.jpg
+    alt: Durante i lavori. Le nuove pareti in cartongesso in costruzione, gli impianti a vista e un operaio al lavoro.
+    fase: durante
+    didascalia: ''
+  - immagine: ../../assets/progetti/casa-01/pianta.jpg
+    alt: La pianta di progetto disegnata a mano e colorata, con la cucina, l'isola e gli arredi.
+    fase: disegno
+    didascalia: La pianta di progetto, disegnata a mano.
+  - immagine: ../../assets/progetti/casa-01/dopo-01.jpg
+    alt: La cucina finita vista dalla zona giorno, con l'isola e la cappa in acciaio.
+    fase: dopo
+    didascalia: ''
+  - immagine: ../../assets/progetti/casa-01/dopo-02.jpg
+    alt: Il piano di lavoro con lavello e piano cottura, illuminato dalla fascia luminosa sotto i pensili.
+    fase: dopo
+    didascalia: ''
+  - immagine: ../../assets/progetti/casa-01/dopo-03.jpg
+    alt: L'isola con il piano cottura e la cappa in acciaio, vista di fronte.
+    fase: dopo
+    didascalia: ''

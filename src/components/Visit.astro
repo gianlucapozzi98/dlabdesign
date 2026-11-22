@@ -1,0 +1,88 @@
+---
+import SectionHead from './SectionHead.astro';
+import Hours from './Hours.astro';
+import ConsentMap from './ConsentMap.astro';
+import { SITE, CTA } from '../data/site';
+interface Props {
+  tav?: string;
+  level?: 'h1' | 'h2';
+  title?: string;
+}
+const { tav = '11', level = 'h2', title = 'Vieni a trovarci' } = Astro.props;
+---
+
+<section class="section visit" id="vieni-a-trovarci" aria-labelledby="visit-title">
+  <div class="wrap">
+    <SectionHead tav={tav} title={title} id="visit-title" nota="Treviglio · Alcentro" level={level} />
+    <div class="visit__grid">
+      <div class="visit__info">
+        <p class="lead">
+          Siamo nel complesso Alcentro, all’angolo tra Via De Gasperi e Via Monte Grappa. Il parcheggio sotterraneo è in Via Setti.
+        </p>
+        <address class="visit__addr">
+          <span class="mono muted">Showroom</span>
+          {SITE.showroom.via}<br />{SITE.showroom.cap} {SITE.showroom.citta} ({SITE.showroom.provincia})
+        </address>
+        <p class="visit__appt">
+          <strong>Martedì e mercoledì solo su appuntamento.</strong>{' '}
+          Per prenotare chiama lo <a class="link" href={SITE.appuntamenti.href}>{SITE.appuntamenti.testo}</a>.
+        </p>
+        <div class="btn-row">
+          <a class="btn" href={CTA.href}>{CTA.label}</a>
+          <a class="btn btn--ghost" href={SITE.appuntamenti.href}>Chiama {SITE.appuntamenti.testo}</a>
+        </div>
+        <div class="visit__hours">
+          <h3 class="mono muted">Orari</h3>
+          <Hours />
+        </div>
+        <p class="small muted">
+          Showroom <a class="link" href={SITE.telefono.href}>{SITE.telefono.testo}</a> · <a class="link" href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        </p>
+      </div>
+      <div class="visit__map">
+        <ConsentMap />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .visit__grid {
+    display: grid;
+    gap: var(--s-8) var(--gutter);
+    margin-top: var(--s-7);
+  }
+  @media (min-width: 960px) {
+    .visit__grid {
+      grid-template-columns: 5fr 6fr;
+      align-items: start;
+    }
+  }
+  .visit__info {
+    display: grid;
+    gap: var(--s-5);
+    align-content: start;
+  }
+  .visit__info .lead {
+    max-width: 30ch;
+  }
+  .visit__addr {
+    font-style: normal;
+    display: grid;
+    gap: var(--s-1);
+    font-size: var(--t-lead);
+    line-height: 1.35;
+  }
+  .visit__appt {
+    padding-left: var(--s-4);
+    border-left: 2px solid var(--c-quota);
+    max-width: 44ch;
+  }
+  .visit__hours h3 {
+    margin-bottom: var(--s-2);
+    font-size: var(--t-mono);
+  }
+  .small {
+    font-size: var(--t-small);
+  }
+</style>

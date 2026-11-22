@@ -1,0 +1,77 @@
+---
+import { getCollection } from 'astro:content';
+import SogliaDrawing from './SogliaDrawing.astro';
+import Esploso from './Esploso.astro';
+interface Props {
+  headingLevel?: 'h2' | 'h3';
+}
+const { headingLevel = 'h3' } = Astro.props;
+const H = headingLevel;
+const studi = (await getCollection('studi')).sort((a, b) => a.data.ordine - b.data.ordine);
+---
+
+<ol class="studi" role="list">
+  {
+    studi.map((s) => (
+      <li class="studi__item">
+        <a class="studi__link" href={`/progetti/${s.id}/`}>
+          <span class="tag tag--box tag--quota">Studio concettuale, non realizzato</span>
+          <div class="studi__draw">
+            {s.data.disegno === 'soglia' ? <SogliaDrawing id={`sl-${s.id}`} withElevation={false} draw={false} /> : <Esploso id={`es-${s.id}`} compact />}
+          </div>
+          <H class="studi__title">{s.data.titolo}</H>
+          <p class="muted">{s.data.sintesi}</p>
+        </a>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .studi {
+    display: grid;
+    gap: var(--gutter);
+    list-style: none;
+    padding: 0;
+  }
+  @media (min-width: 760px) {
+    .studi {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .studi__link {
+    display: grid;
+    gap: var(--s-4);
+    height: 100%;
+    align-content: start;
+    padding: var(--s-5);
+    text-decoration: none;
+    border: 1px dashed var(--c-grafite);
+    background-image: linear-gradient(color-mix(in srgb, var(--c-filo) 45%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--c-filo) 45%, transparent) 1px, transparent 1px);
+    background-size: 24px 24px;
+    transition: border-color var(--d-2) var(--ease);
+  }
+  .studi__link:hover {
+    border-color: var(--c-inchiostro);
+  }
+  .studi__link .tag {
+    justify-self: start;
+  }
+  .studi__draw {
+    padding: var(--s-4);
+    max-height: 340px;
+    display: grid;
+    place-items: center;
+  }
+  .studi__draw :global(svg) {
+    max-height: 300px;
+  }
+  .studi__draw :global(figcaption) {
+    display: none;
+  }
+  .studi__title {
+    font-size: var(--t-h3);
+    font-weight: 450;
+  }
+</style>

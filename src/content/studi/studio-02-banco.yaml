@@ -1,0 +1,14 @@
+titolo: Studio 02 — Banco
+ordine: 2
+sintesi: Un banco come somma di strati. Vetro, legno, metallo, laccato, superficie materica.
+descrizione: |-
+  Un banco scomposto nei suoi strati, per far vedere dove i materiali si incontrano. I materiali sono quelli che compaiono nei nostri progetti di negozio: legno e metallo, ecolegno, laccato, pannelli con effetto materico e vetro.
+
+  È uno schema di studio: non è un lavoro realizzato, non è un prodotto in vendita e non ha misure di progetto.
+disegno: banco
+materiali:
+  - Vetro
+  - Legno
+  - Metallo
+  - Laccato
+  - Pannello con effetto materico

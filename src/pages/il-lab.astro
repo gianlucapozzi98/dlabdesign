@@ -1,0 +1,199 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Closing from '../components/Closing.astro';
+import Lightbox from '../components/Lightbox.astro';
+import { Image, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import tour from '../data/tour.json';
+import { SITE } from '../data/site';
+import soglia from '../assets/tour/tour-03.jpg';
+
+const imgs = import.meta.glob<{ default: ImageMetadata }>('../assets/tour/tour-0*.jpg', { eager: true });
+const tappe = await Promise.all(
+  tour.scenes.map(async (s) => {
+    const src = imgs[`../assets/tour/${s.id}.jpg`].default;
+    return { ...s, src, big: (await getImage({ src, width: src.width, format: 'webp', quality: 82 })).src };
+  }),
+);
+---
+
+<Base title="Il Lab" description="D-Labdesign è uno spazio creativo a Treviglio dove nascono progetti e soluzioni sorprendenti e dove volumi e materiali si incontrano.">
+  <PageHeader
+    title="Il Lab"
+    lead="Uno spazio creativo dove nascono progetti e soluzioni sorprendenti, e dove volumi e materiali si incontrano."
+    crumbs={[{ label: 'Il Lab' }]}
+    tavola="L.01"
+    nota="D-Labdesign by Arredamenti Salini"
+  />
+
+  <section class="wrap lab section" aria-labelledby="idea-title">
+    <h2 class="sr-only" id="idea-title">L’idea</h2>
+    <div class="lab__cols">
+      <div class="prose lab__prose">
+        <p class="lead">
+          D-Labdesign è uno spazio creativo dove nascono progetti e soluzioni sorprendenti e dove volumi e materiali si incontrano, per percorrere la
+          strada dell’innovazione.
+        </p>
+        <p>
+          Dentro il Lab nascono idee pensate per creare meraviglia: un elemento deve essere bello, ma nello stesso tempo deve stupire e far
+          riflettere.
+        </p>
+        <p>
+          Così si esce dalla consuetudine: nascono mobili frutto della contaminazione tra materiali diversi, con un uso fuori dall’ordinario di volumi
+          e funzioni.
+        </p>
+        <p class="lab__close">{SITE.chiusura}</p>
+      </div>
+      <figure class="lab__quote">
+        <div class="ph">
+          <Image src={soglia} alt="All’ingresso dello showroom, una parete chiara con un listello di legno e una frase scritta a mano." widths={[480, 800, 1000]} sizes="(min-width: 960px) 40vw, 92vw" loading="lazy" format="avif" quality={68} />
+        </div>
+        <figcaption>
+          <p class="mono muted">Sulla parete dell’ingresso</p>
+          <blockquote class="lab__bq">
+            <p>
+              «Non c’è progetto senza un’idea. E un’idea è fatta inizialmente di parole… magari anche solo di una parola. Quindi… mai gettare le parole
+              al vento!»
+            </p>
+          </blockquote>
+          <p class="mono muted">Foto dell’inaugurazione, 2012 · Melting Studio</p>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="wrap esplora section" id="esplora" aria-labelledby="esplora-title">
+    <SectionHead tav="L.02" title="Esplora lo studio" id="esplora-title" nota="Dall’esterno all’interno" />
+    <p class="lead esplora__lead">La stessa visita del tour d’ingresso, senza movimento: quattro foto, dall’esterno all’interno.</p>
+    {tour.provvisorio && <p class="mono esplora__nota">{tour.notaProvvisoria}</p>}
+    <ol class="esplora__list" role="list" data-lb-group>
+      {
+        tappe.map((t) => (
+          <li class="tappa">
+            <a class="tappa__img" href={t.big} data-lb data-cap={`${t.titolo} — ${t.alt}`} data-cursor>
+              <Image src={t.src} alt={t.alt} widths={[480, 800, 1000]} sizes="(min-width: 960px) 46vw, 92vw" loading="lazy" format="avif" quality={68} />
+            </a>
+            <div class="tappa__txt">
+              <span class="mono tag--quota">TAV. {t.tavola}</span>
+              <h3 class="tappa__t">
+                {t.titolo} <span class="muted">— {t.luogo}</span>
+              </h3>
+              <p class="muted">{t.alt}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="wrap section lab-next" aria-labelledby="next-title">
+    <h2 class="h3" id="next-title">Guarda i lavori</h2>
+    <div class="btn-row">
+      <a class="btn" href="/progetti/">Progetti realizzati</a>
+      <a class="btn btn--ghost" href="/progetti/studi/">Studi non realizzati</a>
+      <a class="btn btn--ghost" href="/the-opening/">The Opening</a>
+    </div>
+  </section>
+
+  <Closing />
+  <Lightbox />
+</Base>
+
+<style>
+  .lab__cols {
+    display: grid;
+    gap: var(--s-8) var(--gutter);
+  }
+  @media (min-width: 960px) {
+    .lab__cols {
+      grid-template-columns: 6fr 1fr 5fr;
+    }
+    .lab__quote {
+      grid-column: 3;
+    }
+  }
+  .lab__prose {
+    font-size: var(--t-lead);
+  }
+  .lab__close {
+    font-size: var(--t-h3);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-top: var(--s-6);
+  }
+  .lab__quote {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .lab__quote .ph {
+    aspect-ratio: 4 / 5;
+  }
+  .lab__bq {
+    font-size: var(--t-lead);
+    line-height: 1.4;
+    padding-left: var(--s-4);
+    border-left: 2px solid var(--c-quota);
+    margin-block: var(--s-3);
+    font-style: italic;
+  }
+  .esplora__lead {
+    margin-top: var(--s-6);
+    max-width: 48ch;
+  }
+  .esplora__nota {
+    margin-top: var(--s-3);
+    color: var(--c-grafite);
+    text-transform: none;
+    letter-spacing: 0.01em;
+  }
+  .esplora__list {
+    display: grid;
+    gap: var(--s-8);
+    margin-top: var(--s-8);
+    list-style: none;
+    padding: 0;
+  }
+  .tappa {
+    display: grid;
+    gap: var(--s-4) var(--gutter);
+  }
+  @media (min-width: 960px) {
+    .tappa {
+      grid-template-columns: 7fr 4fr;
+      align-items: end;
+    }
+    .tappa:nth-child(even) .tappa__img {
+      order: 2;
+    }
+  }
+  .tappa__img {
+    display: block;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+  }
+  .tappa__img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--d-3) var(--ease);
+  }
+  .tappa__img:hover :global(img) {
+    transform: scale(1.02);
+  }
+  .tappa__txt {
+    display: grid;
+    gap: var(--s-2);
+    max-width: 42ch;
+  }
+  .tappa__t {
+    font-size: var(--t-h3);
+    font-weight: 420;
+  }
+  .lab-next {
+    display: grid;
+    gap: var(--s-5);
+    padding-top: 0;
+  }
+</style>

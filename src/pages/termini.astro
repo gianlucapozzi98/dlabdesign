@@ -1,0 +1,36 @@
+---
+import LegalPage from '../components/LegalPage.astro';
+import { SITE } from '../data/site';
+const s = SITE.societa;
+---
+
+<LegalPage title="Note legali" description="Note legali e condizioni d’uso del sito D-Labdesign. Bozza da validare.">
+  <h2>Chi gestisce il sito</h2>
+  <p>
+    {s.ragioneSociale} <span class="placeholder">da verificare</span> · sede legale {s.sedeLegale} · P.IVA e C.F. {s.piva} · REA
+    <span class="placeholder">da inserire</span> · capitale sociale <span class="placeholder">da inserire</span> · PEC
+    <span class="placeholder">da inserire</span>. «D-Labdesign» è l’insegna dello showroom di {SITE.showroom.via}, Treviglio
+    <span class="placeholder">forma da confermare</span>.
+  </p>
+
+  <h2>Contenuti</h2>
+  <p>
+    Testi, disegni, foto e grafica del sito appartengono al titolare o ai rispettivi autori e non possono essere copiati senza autorizzazione. I crediti
+    delle foto sono indicati nelle pagine (per esempio «Foto Melting Studio, Treviglio»).
+  </p>
+  <p>
+    I <strong>progetti realizzati</strong> mostrano lavori veri. Gli <strong>studi</strong> sono disegni concettuali non realizzati e sono sempre
+    indicati come tali. I disegni marcati «schema» sono illustrativi e non in scala.
+  </p>
+
+  <h2>Prodotti, prezzi e condizioni di vendita</h2>
+  <p>
+    Il sito non vende online e non pubblica prezzi. Condizioni di vendita, di preventivo e di garanzia: <span class="placeholder">[testi da fornire dal cliente]</span>.
+  </p>
+
+  <h2>Responsabilità e link</h2>
+  <p>
+    Il titolare cura le informazioni del sito ma non garantisce che siano sempre complete e aggiornate (per esempio aperture straordinarie). Per gli orari fa
+    fede quanto comunicato allo 0363 301622. I link a siti esterni sono offerti per comodità: il titolare non risponde dei loro contenuti.
+  </p>
+</LegalPage>

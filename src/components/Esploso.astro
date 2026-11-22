@@ -1,0 +1,227 @@
+---
+/**
+ * VOLUMI E MATERIALI — esploso assonometrico di un banco.
+ * SCHEMA ILLUSTRATIVO: non è un prodotto né un progetto realizzato, non ha misure.
+ * I materiali sono quelli citati nei testi dei progetti realizzati (NEGOZIO | TABACCHERIA, NEGOZIO | ABBIGLIAMENTO).
+ */
+import { faces, pathOf, hatch, iso, bbox, type Box, type P3 } from '../lib/iso';
+
+interface Props {
+  compact?: boolean;
+  id?: string;
+}
+const { compact = false, id = 'esploso' } = Astro.props;
+
+type Layer = { box: Box; mat: 'laccato' | 'materico' | 'metallo' | 'legno' | 'vetro'; n: number; nome: string; ring?: boolean };
+const W = 260,
+  D = 74;
+const layers: Layer[] = [
+  { box: { x: 8, y: 6, z: 0, w: W - 16, d: D - 12, h: 12 }, mat: 'laccato', n: 5, nome: 'Laccato' },
+  { box: { x: 0, y: 0, z: 12, w: W, d: D, h: 86 }, mat: 'materico', n: 4, nome: 'Pannello con effetto materico' },
+  { box: { x: 0, y: 0, z: 98, w: W, d: D, h: 5 }, mat: 'metallo', n: 3, nome: 'Metallo', ring: true },
+  { box: { x: -8, y: -8, z: 103, w: W + 16, d: D + 16, h: 9 }, mat: 'legno', n: 2, nome: 'Legno' },
+  { box: { x: 16, y: 14, z: 112, w: W - 32, d: D - 28, h: 3 }, mat: 'vetro', n: 1, nome: 'Vetro' },
+];
+const GAP = 58; // distanza tra gli strati a esploso completo
+const TOP = layers.length - 1;
+
+// punti per il riquadro, a esploso completo
+const all: [number, number][] = [];
+layers.forEach((l, i) => {
+  const off = i * GAP;
+  const fs = faces({ ...l.box, z: l.box.z });
+  [...fs.top, ...fs.front, ...fs.right].forEach((p) => {
+    const [x, y] = iso(p);
+    all.push([x, y - off], [x, y]);
+  });
+});
+const bb = bbox(all, 30);
+const labelX = bb.x + bb.w + 10; // colonna dei richiami a destra
+const vb = `${bb.x} ${bb.y} ${bb.w + 230} ${bb.h}`;
+
+const mats = layers.map((l, i) => {
+  const b = l.box;
+  const fs = faces(b);
+  const t = b.z + b.h;
+  let pattern = '';
+  if (l.mat === 'legno') {
+    pattern = hatch([b.x, b.y, t], [b.w, 0, 0], [0, b.d, 0], 9, 0.25, 7);
+    pattern += hatch([b.x, b.y + b.d, t], [b.w, 0, 0], [0, 0, -b.h], 3, 0.1, 3);
+  } else if (l.mat === 'vetro') {
+    // segno convenzionale del vetro: coppie di tratti obliqui
+    const marks: string[] = [];
+    [0.22, 0.5, 0.78].forEach((k) => {
+      const a = iso([b.x + b.w * k, b.y + b.d * 0.2, t]);
+      const c = iso([b.x + b.w * k + 14, b.y + b.d * 0.8, t]);
+      marks.push(`M${a[0].toFixed(1)} ${a[1].toFixed(1)}L${c[0].toFixed(1)} ${c[1].toFixed(1)}`);
+      const a2 = iso([b.x + b.w * k + 8, b.y + b.d * 0.2, t]);
+      const c2 = iso([b.x + b.w * k + 22, b.y + b.d * 0.8, t]);
+      marks.push(`M${a2[0].toFixed(1)} ${a2[1].toFixed(1)}L${c2[0].toFixed(1)} ${c2[1].toFixed(1)}`);
+    });
+    pattern = marks.join('');
+  } else if (l.mat === 'metallo') {
+    // doppia linea del profilo
+    pattern = hatch([b.x, b.y + b.d, t], [b.w, 0, 0], [0, 0, -b.h], 2, 0, 1);
+  } else if (l.mat === 'laccato') {
+    pattern = '';
+  }
+  // anello del telaio in metallo: foro interno sulla faccia superiore
+  const ring = l.ring
+    ? pathOf([
+        [b.x + 8, b.y + 8, t],
+        [b.x + b.w - 8, b.y + 8, t],
+        [b.x + b.w - 8, b.y + b.d - 8, t],
+        [b.x + 8, b.y + b.d - 8, t],
+      ])
+    : '';
+  // ancora del richiamo: spigolo destro-frontale in alto
+  const anchor = iso([b.x + b.w, b.y + b.d * 0.5, b.z + b.h * 0.5] as P3);
+  return {
+    ...l,
+    i,
+    top: pathOf(fs.top),
+    front: pathOf(fs.front),
+    right: pathOf(fs.right),
+    pattern,
+    ring,
+    anchor,
+    clipId: `${id}-c${i}`,
+  };
+});
+---
+
+<figure class:list={['esploso', { 'esploso--compact': compact }]} data-esploso>
+  <svg
+    class="drawing esploso__svg"
+    viewBox={vb}
+    role="img"
+    aria-labelledby={`${id}-t ${id}-d`}
+    data-gap={GAP}
+    data-top={TOP}
+  >
+    <title id={`${id}-t`}>Schema illustrativo: un banco scomposto in cinque strati</title>
+    <desc id={`${id}-d`}>
+      Dall'alto: piano in vetro, piano in legno, telaio in metallo, corpo rivestito con un pannello con effetto materico, zoccolo laccato.
+    </desc>
+    <defs>
+      <pattern id={`${id}-dots`} width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="skewY(30)">
+        <circle cx="1.5" cy="1.5" r="0.9" fill="currentColor" opacity="0.55"></circle>
+        <circle cx="5" cy="4.5" r="0.6" fill="currentColor" opacity="0.4"></circle>
+      </pattern>
+      {mats.map((m) => <clipPath id={m.clipId}><path d={m.top} /></clipPath>)}
+    </defs>
+    {
+      mats.map((m) => {
+        const lx = labelX;
+        const ly = m.anchor[1];
+        return (
+          <g class="layer" data-layer={m.i} data-mat={m.mat}>
+            <path class={`face face--right m-${m.mat}`} d={m.right} />
+            <path class={`face face--front m-${m.mat}`} d={m.front} />
+            {m.mat === 'materico' && <path class="no-draw stipple" d={m.front} fill={`url(#${id}-dots)`} />}
+            <path class={`face face--top m-${m.mat}`} d={m.top} />
+            {m.ring && <path class="ring" d={m.ring} />}
+            {m.pattern && <path class="pat" d={m.pattern} clip-path={m.mat === 'legno' ? undefined : undefined} />}
+            <g class="callout" data-late>
+              <path class="leader" d={`M${m.anchor[0].toFixed(1)} ${ly.toFixed(1)}H${lx - 12}`} />
+              <circle class="bubble" cx={lx} cy={ly} r="10" />
+              <text class="tx bubble-n" x={lx} y={ly + 4} text-anchor="middle">
+                {m.n}
+              </text>
+              <text class="tx bubble-l" x={lx + 18} y={ly + 4}>
+                {m.nome}
+              </text>
+            </g>
+          </g>
+        );
+      })
+    }
+  </svg>
+  <figcaption class="esploso__cap mono">Schema illustrativo · non in scala · non è un prodotto né un lavoro realizzato</figcaption>
+</figure>
+
+<script>
+  import { afterFirstImage } from '../scripts/ready';
+  afterFirstImage().then(() => import('../scripts/esploso').then((m) => m.initEsploso()));
+</script>
+
+<style>
+  .esploso {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .esploso__svg {
+    width: 100%;
+    height: auto;
+    color: var(--c-inchiostro);
+  }
+  .face {
+    stroke: currentColor;
+    stroke-width: 1.1;
+    stroke-linejoin: round;
+  }
+  .face--top {
+    fill: #f6f5f1;
+  }
+  .face--front {
+    fill: #e8e7e1;
+  }
+  .face--right {
+    fill: #d9d8d1;
+  }
+  .face.m-laccato.face--top {
+    fill: #efeee9;
+  }
+  .face.m-metallo {
+    fill: #cfd0cd;
+  }
+  .face.m-metallo.face--top {
+    fill: #e0e1de;
+  }
+  .face.m-vetro {
+    fill: rgb(214 226 228 / 0.55);
+  }
+  .face.m-vetro.face--top {
+    fill: rgb(232 240 241 / 0.7);
+  }
+  .stipple {
+    color: var(--c-grafite);
+    pointer-events: none;
+  }
+  .ring {
+    fill: var(--c-lucido);
+    stroke: currentColor;
+    stroke-width: 0.9;
+  }
+  .pat {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 0.6;
+    opacity: 0.55;
+  }
+  .leader {
+    stroke: var(--c-grafite);
+    stroke-width: 0.8;
+    fill: none;
+    stroke-dasharray: 2 3;
+  }
+  .bubble {
+    fill: var(--c-lucido);
+    stroke: var(--c-inchiostro);
+    stroke-width: 1;
+  }
+  .bubble-n {
+    font-size: 11px;
+    fill: var(--c-inchiostro);
+  }
+  .bubble-l {
+    font-size: 12px;
+    fill: var(--c-inchiostro);
+    text-transform: none;
+    letter-spacing: 0.02em;
+  }
+  .esploso__cap {
+    color: var(--c-quota-testo);
+    font-size: 0.75rem;
+  }
+</style>
